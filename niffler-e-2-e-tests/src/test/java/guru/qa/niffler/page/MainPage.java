@@ -14,9 +14,6 @@ public class MainPage {
   private final SelenideElement profileButton = $("a[href='/profile']");
   private final SelenideElement spendingHeader = $x("//h2[text()='History of Spendings']");
   private final SelenideElement statisticsHeader = $x("//h2[text()='Statistics']");
-    private final ElementsCollection tableRows = $("#spendings tbody").$$("tr");
-    private final SelenideElement menuButton = $("button[aria-label='Menu']");
-    private final SelenideElement profileButton = $("a[href='/profile']");
     private final SelenideElement friendsButton = $("a[href = '/people/friends']");
     private final SelenideElement allPeopleButton = $("a[href = '/people/all']");
 

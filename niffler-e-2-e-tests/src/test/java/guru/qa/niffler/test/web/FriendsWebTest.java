@@ -1,8 +1,8 @@
 package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
+import guru.qa.niffler.BaseWebTest;
 import guru.qa.niffler.config.Config;
-import guru.qa.niffler.jupiter.extension.BrowserExtension;
 import guru.qa.niffler.jupiter.extension.UsersQueueExtension;
 import guru.qa.niffler.jupiter.extension.UsersQueueExtension.StaticUser;
 import guru.qa.niffler.jupiter.extension.UsersQueueExtension.UserType;
@@ -15,8 +15,7 @@ import static guru.qa.niffler.jupiter.extension.UsersQueueExtension.UserType.Typ
 import static guru.qa.niffler.jupiter.extension.UsersQueueExtension.UserType.Type.WITH_INCOME_REQUEST;
 import static guru.qa.niffler.jupiter.extension.UsersQueueExtension.UserType.Type.WITH_OUTCOME_REQUEST;
 
-@ExtendWith(BrowserExtension.class)
-public class FriendsWebTest {
+public class FriendsWebTest extends BaseWebTest {
     private static final Config CFG = Config.getInstance();
     private static final String EMPTY_FRIENDS_TABLE = "There are no users yet";
     private static final String WAITING = "Waiting...";
