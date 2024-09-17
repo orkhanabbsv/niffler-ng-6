@@ -1,7 +1,8 @@
-package guru.qa.niffler.jupiter;
+package guru.qa.niffler.jupiter.extension;
 
 import com.github.javafaker.Faker;
 import guru.qa.niffler.api.SpendApiClient;
+import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.model.CategoryJson;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
@@ -22,44 +23,43 @@ public class CreateCategoryExtension implements BeforeEachCallback, AfterEachCal
                 .ifPresent(anno -> {
                     CategoryJson createdCategory = new CategoryJson(
                             null,
-                            faker.company().name(),
+                            anno.name().isEmpty() ? faker.company().name() : anno.name(),
                             anno.username(),
                             false
                     );
 
-                    CategoryJson categoryJson = categoryApiClient.addCategory(createdCategory);
+                    CategoryJson category = categoryApiClient.addCategory(createdCategory);
 
                     if (anno.archived()) {
-                        CategoryJson updateCategory = new CategoryJson(
-                                categoryJson.id(),
-                                categoryJson.name(),
-                                categoryJson.username(),
+                        CategoryJson updatedCategory = new CategoryJson(
+                                category.id(),
+                                category.name(),
+                                category.username(),
                                 true
                         );
-
-                        createdCategory = categoryApiClient.updateCategory(updateCategory);
+                        category = categoryApiClient.updateCategory(updatedCategory);
                     }
 
                     context.getStore(CATEGORY_NAMESPACE).put(
                             context.getUniqueId(),
-                            createdCategory
+                            category
                     );
                 });
     }
 
+
     @Override
     public void afterEach(ExtensionContext context) {
-        CategoryJson category = context.getStore(CATEGORY_NAMESPACE).get(context.getUniqueId(), CategoryJson.class);
+        CategoryJson categoryCtx = context.getStore(CATEGORY_NAMESPACE).get(context.getUniqueId(), CategoryJson.class);
 
-        if (category.archived()) {
-            CategoryJson categoryJson = new CategoryJson(
-                    category.id(),
-                    category.name(),
-                    category.username(),
-                    true
-            );
+        CategoryJson category = new CategoryJson(
+                categoryCtx.id(),
+                categoryCtx.name(),
+                categoryCtx.username(),
+                true
+        );
 
-            categoryApiClient.updateCategory(categoryJson);
-        }
+        categoryApiClient.updateCategory(category);
+
     }
 }
