@@ -35,7 +35,7 @@ public class CategoryExtension implements
                                 : categoryAnno.name(),
 
                                 anno.username(),
-                                categoryAnno.archived()
+                                false
                         );
 
                         CategoryJson created = spendApiClient.createCategory(category);
