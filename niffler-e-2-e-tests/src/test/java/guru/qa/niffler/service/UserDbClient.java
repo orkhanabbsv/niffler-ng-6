@@ -254,11 +254,10 @@ public class UserDbClient {
         );
     }
 
-    public Optional<UserEntity> findById(UUID id) {
+    public Optional<UserJson> findById(UUID id) {
         return xaTransactionTemplate.execute(() -> {
                     Optional<UserEntity> byId = userdataSpringRepository.findById(id);
-//                    return byId.map(entity -> UserJson.fromEntity(entity, null));
-            return byId;
+                    return byId.map(entity -> UserJson.fromEntity(entity, null));
                 }
         );
     }
