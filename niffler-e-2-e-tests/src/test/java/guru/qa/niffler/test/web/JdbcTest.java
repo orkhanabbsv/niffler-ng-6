@@ -7,6 +7,8 @@ import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.service.SpendDbClient;
 import guru.qa.niffler.service.UserDbClient;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Date;
 
@@ -42,7 +44,7 @@ public class JdbcTest {
     @Test
     void springJdbcTest() {
         UserJson user = usersDbClient.createUserSpringJdbcRepository(
-                getUserWithName(randomUsername())
+                randomUsername(), "12345"
         );
         System.out.println(user);
     }
@@ -83,23 +85,33 @@ public class JdbcTest {
     void addFriendTest() {
 
         UserJson myself = usersDbClient.createUserSpringJdbcRepository(
-                getUserWithName("myself-4")
+                "myself-4", "12345"
         );
 
         UserJson friend = usersDbClient.createUserSpringJdbcRepository(
-                getUserWithName("myfriend-4")
+                "myfriend-4", "12345"
         );
 
         UserJson income = usersDbClient.createUserSpringJdbcRepository(
-               getUserWithName("income-4")
+                "income-4", "12345"
         );
 
         UserJson outcome = usersDbClient.createUserSpringJdbcRepository(
-               getUserWithName("outcome-4")
+              "outcome-4", "12345"
         );
 
         usersDbClient.addInvitation(income, outcome);
         usersDbClient.addFriends(myself, friend);
+    }
+
+    @ValueSource(strings = {
+            "orik-12",
+            "orik-13",
+            "orik-14"
+    })
+    @ParameterizedTest
+    void hibernateTransactions(String username) {
+        usersDbClient.createUserSpringJdbcRepository(username, "12345");
     }
 
     private UserJson getUserWithName(String username) {

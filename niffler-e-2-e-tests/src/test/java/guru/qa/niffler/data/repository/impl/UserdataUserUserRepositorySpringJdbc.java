@@ -4,7 +4,7 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.entity.userdata.FriendshipStatus;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.data.mapper.UdUserEntityResultSetExtractor;
-import guru.qa.niffler.data.repository.UserdataRepository;
+import guru.qa.niffler.data.repository.UserdataUserRepository;
 import guru.qa.niffler.data.tpl.DataSources;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -19,7 +19,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
 
-public class UserdataUserRepositorySpringJdbc implements UserdataRepository {
+public class UserdataUserUserRepositorySpringJdbc implements UserdataUserRepository {
     private final Config CFG = Config.getInstance();
 
     @Override

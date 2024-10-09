@@ -4,7 +4,7 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.entity.userdata.FriendshipEntity;
 import guru.qa.niffler.data.entity.userdata.FriendshipStatus;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
-import guru.qa.niffler.data.repository.UserdataRepository;
+import guru.qa.niffler.data.repository.UserdataUserRepository;
 import guru.qa.niffler.model.CurrencyValues;
 
 import java.sql.Date;
@@ -19,7 +19,7 @@ import java.util.UUID;
 
 import static guru.qa.niffler.data.tpl.Connections.holder;
 
-public class UserdataUserRepositoryJdbc implements UserdataRepository {
+public class UserdataUserUserRepositoryJdbc implements UserdataUserRepository {
     private final Config CFG = Config.getInstance();
 
     @Override

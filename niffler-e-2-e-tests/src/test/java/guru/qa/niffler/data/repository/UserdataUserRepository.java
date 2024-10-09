@@ -6,7 +6,7 @@ import guru.qa.niffler.data.entity.userdata.UserEntity;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface UserdataRepository {
+public interface UserdataUserRepository {
     UserEntity create(UserEntity user);
     Optional<UserEntity> findById(UUID id);
     void addInvitation(UserEntity requester, UserEntity addressee);
