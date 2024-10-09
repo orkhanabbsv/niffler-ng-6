@@ -58,8 +58,8 @@ public class UserdataUserRepositorySpringJdbc implements UserdataRepository {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.userDataJdbcUrl()));
         return Optional.ofNullable(
                 jdbcTemplate.query(
-                        "select * from \"user\" u join \"friendship\" f on u.id = f.requester_id or u.id = f.addressee_id " +
-                                "where id = ?",
+                        "select * from \"user\" u left join \"friendship\" f on u.id = f.requester_id or u.id = f.addressee_id " +
+                                "where u.id = ?",
                         UdUserEntityResultSetExtractor.instance,
                         id
                 )
@@ -71,28 +71,16 @@ public class UserdataUserRepositorySpringJdbc implements UserdataRepository {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.userDataJdbcUrl()));
         Date now = Date.valueOf(LocalDate.now());
 
-        jdbcTemplate.batchUpdate(
-                "insert into \"friendship\"  (requester_id, addressee_id, created_date, status) " +
-                        "VALUES (?, ?, ?, ?)",
-                new BatchPreparedStatementSetter() {
-                    @Override
-                    public void setValues(PreparedStatement ps, int i) throws SQLException {
-                        if (i == 0) {
-                            ps.setObject(1, requester.getId());
-                            ps.setObject(2, addressee.getId());
-                        } else {
-                            ps.setObject(1, addressee.getId());
-                            ps.setObject(2, requester.getId());
-                        }
-                        ps.setDate(3, now);
-                        ps.setString(4, FriendshipStatus.PENDING.name());
-                    }
-
-                    @Override
-                    public int getBatchSize() {
-                        return 2;
-                    }
-                });
+        jdbcTemplate.update(con -> {
+            PreparedStatement ps = con.prepareStatement(
+                    "insert into \"friendship\"  (requester_id, addressee_id, created_date, status) " +
+                            "VALUES (?, ?, ?, ?)");
+            ps.setObject(1, requester.getId());
+            ps.setObject(2, addressee.getId());
+            ps.setDate(3, now);
+            ps.setString(4, FriendshipStatus.PENDING.name());
+            return ps;
+        });
     }
 
 

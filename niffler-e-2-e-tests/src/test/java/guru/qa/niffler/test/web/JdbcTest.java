@@ -1,5 +1,6 @@
 package guru.qa.niffler.test.web;
 
+import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.SpendJson;
@@ -9,6 +10,7 @@ import guru.qa.niffler.service.UserDbClient;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
+import java.util.Optional;
 
 import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 
@@ -100,6 +102,29 @@ public class JdbcTest {
 
         usersDbClient.addInvitation(income, outcome);
         usersDbClient.addFriends(myself, friend);
+    }
+
+    @Test
+    void findByIdTest() {
+        UserJson myself = usersDbClient.createUserSpringJdbcRepository(
+                getUserWithName(randomUsername())
+        );
+
+        UserJson friend = usersDbClient.createUserSpringJdbcRepository(
+                getUserWithName(randomUsername())
+        );
+        System.out.println(myself);
+        System.out.println("===========================");
+        System.out.println(friend);
+
+        usersDbClient.addInvitation(myself, friend);
+        System.out.println("===========================");
+        Optional<UserEntity> byId = usersDbClient.findById(myself.id());
+        byId.get().getFriendshipRequests().forEach(user -> System.out.println(user.getRequester().getUsername()));
+        byId.get().getFriendshipAddressees().forEach(user -> System.out.println(user.getAddressee().getUsername()));
+        System.out.println(byId.get().getFirstname());
+        System.out.println(byId.get().getUsername());
+        System.out.println(byId.get().getId());
     }
 
     private UserJson getUserWithName(String username) {

@@ -56,27 +56,6 @@ public class UserdataUserRepositoryJdbc implements UserdataRepository {
             }
 
             user.setId(generatedKey);
-
-            for (FriendshipEntity friendshipRequest : user.getFriendshipRequests()) {
-                friendshipPs.setObject(1, friendshipRequest.getRequester());
-                friendshipPs.setObject(2, friendshipRequest.getAddressee());
-                friendshipPs.setDate(3, new java.sql.Date(friendshipRequest.getCreatedDate().getTime()));
-                friendshipPs.setObject(4, friendshipRequest.getStatus());
-                friendshipPs.addBatch();
-                friendshipPs.clearParameters();
-            }
-
-            for (FriendshipEntity friendshipAddressee : user.getFriendshipAddressees()) {
-                friendshipPs.setObject(1, friendshipAddressee.getRequester());
-                friendshipPs.setObject(2, friendshipAddressee.getAddressee());
-                friendshipPs.setDate(3, new java.sql.Date(friendshipAddressee.getCreatedDate().getTime()));
-                friendshipPs.setObject(4, friendshipAddressee.getStatus());
-                friendshipPs.addBatch();
-                friendshipPs.clearParameters();
-            }
-
-            friendshipPs.executeBatch();
-
             return user;
 
         } catch (SQLException e) {
@@ -87,8 +66,8 @@ public class UserdataUserRepositoryJdbc implements UserdataRepository {
     @Override
     public Optional<UserEntity> findById(UUID id) {
         try (PreparedStatement ps = holder(CFG.userDataJdbcUrl()).connection().prepareStatement(
-                "select * from \"user\" u join \"friendship\" f ON u.id = f.requester_id or u.id = f.addressee_id " +
-                        "where id = ?"
+                "select * from \"user\" u left join \"friendship\" f ON u.id = f.requester_id or u.id = f.addressee_id " +
+                        "where u.id = ?"
         )) {
             ps.setObject(1, id);
             ps.execute();
@@ -103,12 +82,15 @@ public class UserdataUserRepositoryJdbc implements UserdataRepository {
                     }
 
                     FriendshipEntity fe = new FriendshipEntity();
-                    fe.setRequester(user);
-                    fe.setAddressee(user);
+                    UserEntity requesterId = getUserEntity(user, rs, "requester_id");
+                    UserEntity addresseeId = getUserEntity(user, rs, "addressee_id");
+
+                    fe.setRequester(requesterId);
+                    fe.setAddressee(addresseeId);
                     fe.setCreatedDate(rs.getDate("created_date"));
                     fe.setStatus(FriendshipStatus.valueOf(rs.getString("status")));
 
-                    if (fe.getRequester().getId().equals(user.getId())) {
+                    if (requesterId.getId().equals(user.getId())) {
                         requestList.add(fe);
                     } else {
                         addresseeList.add(fe);
@@ -128,6 +110,34 @@ public class UserdataUserRepositoryJdbc implements UserdataRepository {
         }
     }
 
+    private UserEntity getUserEntity(UserEntity user, ResultSet rs, String targetId) throws SQLException {
+        UUID targetUUID = rs.getObject(targetId, UUID.class);
+        if (targetUUID == null) return null;
+
+        return user.getId().equals(targetUUID)
+               ? user
+               : findUserEntityById(targetUUID).orElseThrow();
+    }
+
+    public Optional<UserEntity> findUserEntityById(UUID id) {
+        try (PreparedStatement ps = holder(CFG.userDataJdbcUrl()).connection().prepareStatement(
+                "SELECT * FROM \"user\" WHERE id = ?")) {
+            ps.setObject(1, id);
+            ps.execute();
+
+            try (ResultSet rs = ps.getResultSet()) {
+                if (rs.next()) {
+                    UserEntity user = getUserEntity(rs);
+                    return Optional.of(user);
+                } else {
+                    return Optional.empty();
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     public void addInvitation(UserEntity requester, UserEntity addressee) {
         try (PreparedStatement ps = holder(CFG.userDataJdbcUrl()).connection().prepareStatement(
@@ -140,15 +150,7 @@ public class UserdataUserRepositoryJdbc implements UserdataRepository {
             ps.setObject(2, addressee.getId());
             ps.setDate(3, now);
             ps.setString(4, FriendshipStatus.PENDING.name());
-            ps.addBatch();
-
-            ps.setObject(1, addressee.getId());
-            ps.setObject(2, requester.getId());
-            ps.setDate(3, now);
-            ps.setString(4, FriendshipStatus.PENDING.name());
-            ps.addBatch();
-
-            ps.executeBatch();
+            ps.execute();
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
