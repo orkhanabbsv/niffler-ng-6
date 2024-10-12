@@ -3,7 +3,7 @@ package guru.qa.niffler.data.dao.impl;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.dao.UdUserDao;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
-import guru.qa.niffler.data.mapper.UdUserEntityRowMapper;
+import guru.qa.niffler.data.mapper.UserdataUserEntityRowMapper;
 import guru.qa.niffler.data.tpl.DataSources;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -51,7 +51,7 @@ public class UdUserDaoSpringJdbc implements UdUserDao {
     return Optional.ofNullable(
         jdbcTemplate.queryForObject(
             "SELECT * FROM \"user\" WHERE id = ?",
-            UdUserEntityRowMapper.instance,
+            UserdataUserEntityRowMapper.instance,
             id
         )
     );
@@ -62,7 +62,7 @@ public class UdUserDaoSpringJdbc implements UdUserDao {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
     return jdbcTemplate.query(
         "SELECT * FROM \"user\"",
-        UdUserEntityRowMapper.instance
+        UserdataUserEntityRowMapper.instance
     );
   }
 }

@@ -24,23 +24,36 @@ public class AuthUserRepositoryHibernate implements AuthUserRepository {
     return user;
   }
 
-  @Override
-  public Optional<AuthUserEntity> findById(UUID id) {
-    return Optional.ofNullable(
-        entityManager.find(AuthUserEntity.class, id)
-    );
-  }
-
-  @Override
-  public Optional<AuthUserEntity> findByUsername(String username) {
-    try {
-      return Optional.of(
-          entityManager.createQuery("select u from UserEntity u where u.username =: username", AuthUserEntity.class)
-              .setParameter("username", username)
-              .getSingleResult()
-      );
-    } catch (NoResultException e) {
-      return Optional.empty();
+    @Override
+    public AuthUserEntity update(AuthUserEntity user) {
+        entityManager.joinTransaction();
+        return entityManager.merge(user);
     }
-  }
+
+    @Override
+    public Optional<AuthUserEntity> findById(UUID id) {
+        return Optional.ofNullable(
+                entityManager.find(AuthUserEntity.class, id)
+        );
+    }
+
+    @Override
+    public Optional<AuthUserEntity> findByUsername(String username) {
+        try {
+            return Optional.of(entityManager.createQuery(
+                                    "select u from AuthUserEntity u where u.username =: username",
+                                    AuthUserEntity.class
+                            ).setParameter("username", username)
+                            .getSingleResult()
+            );
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public void remove(AuthUserEntity authUser) {
+        entityManager.joinTransaction();
+        entityManager.remove(authUser);
+    }
 }
