@@ -9,14 +9,11 @@ import guru.qa.niffler.data.repository.AuthUserRepository;
 import guru.qa.niffler.data.repository.UserdataUserRepository;
 import guru.qa.niffler.data.repository.impl.AuthUserRepositoryHibernate;
 import guru.qa.niffler.data.repository.impl.UserdataUserRepositoryHibernate;
-import guru.qa.niffler.data.tpl.DataSources;
 import guru.qa.niffler.data.tpl.XaTransactionTemplate;
 import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.UserJson;
-import org.springframework.jdbc.support.JdbcTransactionManager;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -32,12 +29,6 @@ public class UsersDbClient implements UsersClient {
 
     private final AuthUserRepository authUserRepository = new AuthUserRepositoryHibernate();
     private final UserdataUserRepository userdataUserRepository = new UserdataUserRepositoryHibernate();
-
-    private final TransactionTemplate txTemplate = new TransactionTemplate(
-            new JdbcTransactionManager(
-                    DataSources.dataSource(CFG.authJdbcUrl())
-            )
-    );
 
     private final XaTransactionTemplate xaTransactionTemplate = new XaTransactionTemplate(
             CFG.authJdbcUrl(),
@@ -58,18 +49,20 @@ public class UsersDbClient implements UsersClient {
 
     @Override
     public Optional<UserJson> findById(UUID id) {
-//        return xaTransactionTemplate.execute(() -> {
-//            Optional<UserEntity> user = userdataUserRepository.findById(id);
-//                        return user.map(() -> UserJson.fromEntity(user, null))
-//                )
-//            );
-//        });
-        return null;
+        return xaTransactionTemplate.execute(() -> {
+                    Optional<UserEntity> byId = userdataUserRepository.findById(id);
+                    return byId.map(entity -> UserJson.fromEntity(entity, null));
+                }
+        );
     }
 
     @Override
     public Optional<UserJson> findByUsername(String username) {
-        return Optional.empty();
+        return xaTransactionTemplate.execute(() -> {
+                    Optional<UserEntity> byId = userdataUserRepository.findByUsername(username);
+                    return byId.map(entity -> UserJson.fromEntity(entity, null));
+                }
+        );
     }
 
     @Override

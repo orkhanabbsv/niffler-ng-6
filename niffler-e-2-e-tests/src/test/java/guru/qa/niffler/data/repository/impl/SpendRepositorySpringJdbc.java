@@ -16,6 +16,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -148,16 +149,15 @@ public class SpendRepositorySpringJdbc implements SpendRepository {
     }
 
     @Override
-    public Optional<SpendEntity> findByUsernameAndSpendDescription(String username, String description) {
+    public List<SpendEntity> findByUsernameAndSpendDescription(String username, String description) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.spendJdbcUrl()));
-        return Optional.ofNullable(jdbcTemplate.queryForObject(
-                        """
-                                select * from "spend" where username=? and description=?
-                                """,
-                        SpendEntityRowMapper.instance,
-                        username,
-                        description
-                )
+        return jdbcTemplate.query(
+                """
+                        select * from "spend" where username=? and description=?
+                        """,
+                SpendEntityRowMapper.instance,
+                username,
+                description
         );
     }
 

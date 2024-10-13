@@ -7,6 +7,7 @@ import guru.qa.niffler.data.jpa.EntityManagers;
 import guru.qa.niffler.data.repository.SpendRepository;
 import jakarta.persistence.EntityManager;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -44,8 +45,8 @@ public class SpendRepositoryHibernate implements SpendRepository {
     public Optional<CategoryEntity> findCategoryByUsernameAndSpendName(String username, String name) {
         return Optional.ofNullable(entityManager.createQuery(
                                 """
-                                        select * from "category" where username=:username and name=:name
-                                           """,
+                                        select c from CategoryEntity c where username=:username and name=:name
+                                        """,
                                 CategoryEntity.class
                         ).setParameter("username", username)
                         .setParameter("name", name)
@@ -59,30 +60,37 @@ public class SpendRepositoryHibernate implements SpendRepository {
     }
 
     @Override
-    public Optional<SpendEntity> findByUsernameAndSpendDescription(String username, String description) {
-        return Optional.ofNullable(entityManager.createQuery(
-                                """
-                                        select spend from SpendEntity
-                                         where username=:username
-                                         and description=:description
-                                        """,
-                                SpendEntity.class
-                        )
-                        .setParameter("username", username)
-                        .setParameter("description", description)
-                        .getSingleResult()
-        );
+    public List<SpendEntity> findByUsernameAndSpendDescription(String username, String description) {
+        return entityManager.createQuery(
+                        """
+                                select s from SpendEntity s
+                                 where username=:username
+                                 and description=:description
+                                """,
+                        SpendEntity.class
+                )
+                .setParameter("username", username)
+                .setParameter("description", description)
+                .getResultList();
     }
 
     @Override
     public void remove(SpendEntity spend) {
         entityManager.joinTransaction();
-        entityManager.remove(spend);
+        entityManager.remove(
+                entityManager.contains(spend)
+                ? spend
+                : entityManager.merge(spend)
+        );
     }
 
     @Override
     public void removeCategory(CategoryEntity category) {
         entityManager.joinTransaction();
-        entityManager.remove(category);
+        entityManager.remove(
+                entityManager.contains(category)
+                ? category
+                : entityManager.merge(category)
+        );
     }
 }

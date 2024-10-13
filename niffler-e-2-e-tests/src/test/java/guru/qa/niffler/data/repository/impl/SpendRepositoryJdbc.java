@@ -12,6 +12,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -186,7 +188,7 @@ public class SpendRepositoryJdbc implements SpendRepository {
     }
 
     @Override
-    public Optional<SpendEntity> findByUsernameAndSpendDescription(String username, String description) {
+    public List<SpendEntity> findByUsernameAndSpendDescription(String username, String description) {
         try (PreparedStatement ps = holder(CFG.spendJdbcUrl()).connection().prepareStatement(
                 "select * from \"spend\" where username=? and description=?"
         )) {
@@ -195,16 +197,14 @@ public class SpendRepositoryJdbc implements SpendRepository {
             ps.execute();
 
             SpendEntity spend = null;
+            List<SpendEntity> spendEntityList = new ArrayList<>();
             try (ResultSet rs = ps.getResultSet()) {
-                if (rs.next()) {
+                while (rs.next()) {
                     spend = SpendEntityRowMapper.instance.mapRow(rs, 1);
+                    spendEntityList.add(spend);
                 }
 
-                if (spend == null) {
-                    return Optional.empty();
-                } else {
-                    return Optional.of(spend);
-                }
+                return spendEntityList;
             }
         } catch (SQLException e) {
             throw new RuntimeException();

@@ -13,6 +13,7 @@ public interface UsersClient {
     Optional<UserJson> findByUsername(String username);
 
     void createIncomeInvitation(UserJson requester, int count);
+
     void createOutcomeInvitation(UserJson requester, int count);
 
     void addFriend(UserJson requester, int count);
