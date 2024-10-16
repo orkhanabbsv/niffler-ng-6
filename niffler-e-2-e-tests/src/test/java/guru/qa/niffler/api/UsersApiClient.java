@@ -29,7 +29,7 @@ public class UsersApiClient {
         } catch (IOException e) {
             throw new AssertionError(e);
         }
-        assertEquals(201, response.code());
+        assertEquals(200, response.code());
         return response.body();
     }
 

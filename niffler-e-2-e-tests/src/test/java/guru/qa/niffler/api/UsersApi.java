@@ -10,21 +10,21 @@ import retrofit2.http.Query;
 import java.util.List;
 
 public interface UsersApi {
-    @GET("/current")
+    @GET("/internal/users/current")
     Call<UserJson> currentUser(@Query("username") String username);
 
-    @GET("/all")
+    @GET("/internal/users/all")
     Call<List<UserJson>> allUsers(@Query("username") String username);
 
-    @POST("/update")
+    @POST("/internal/users/update")
     Call<UserJson> updateUserInfo(@Body UserJson user);
 
 
-    @POST("/send")
+    @POST("/internal/users/send")
     Call<UserJson> sendInvitation(@Query("username") String username,
                                   @Query("targetUsername") String targetUsername);
 
-    @POST("/accept")
+    @POST("/internal/users/accept")
     Call<UserJson> acceptInvitation(@Query("username") String username,
                                     @Query("targetUsername") String targetUsername);
 }

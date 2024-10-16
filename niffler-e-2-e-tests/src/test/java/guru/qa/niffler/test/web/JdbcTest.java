@@ -24,7 +24,7 @@ public class JdbcTest {
 
     @Test
     void createUser() {
-        usersRestClient.createUser("orxan2", "12345");
+        usersRestClient.createUser(randomUsername(), "12345");
     }
 
     @Test
