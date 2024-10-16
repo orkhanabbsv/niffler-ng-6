@@ -58,7 +58,7 @@ public class UserdataUserUserRepositorySpringJdbc implements UserdataUserReposit
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.userdataJdbcUrl()));
         return Optional.ofNullable(
                 jdbcTemplate.queryForObject(
-                        "select * from \"user\" where u.id = ?",
+                        "SELECT * FROM \"user\" WHERE u.id = ?",
                         UserdataUserEntityRowMapper.instance,
                         id
                 )
@@ -70,7 +70,7 @@ public class UserdataUserUserRepositorySpringJdbc implements UserdataUserReposit
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.userdataJdbcUrl()));
         return Optional.ofNullable(
                 jdbcTemplate.queryForObject(
-                        "select * from \"user\" where username=?",
+                        "SELECT * FROM \"user\" WHERE username=?",
                         UserdataUserEntityRowMapper.instance,
                         username
                 )
@@ -84,7 +84,7 @@ public class UserdataUserUserRepositorySpringJdbc implements UserdataUserReposit
 
         jdbcTemplate.update(con -> {
             PreparedStatement ps = con.prepareStatement(
-                    "insert into \"friendship\"  (requester_id, addressee_id, created_date, status) " +
+                    "INSERT INTO \"friendship\"  (requester_id, addressee_id, created_date, status) " +
                             "VALUES (?, ?, ?, ?)");
             ps.setObject(1, requester.getId());
             ps.setObject(2, addressee.getId());
@@ -101,7 +101,7 @@ public class UserdataUserUserRepositorySpringJdbc implements UserdataUserReposit
         Date now = Date.valueOf(LocalDate.now());
 
         jdbcTemplate.batchUpdate(
-                "insert into \"friendship\"  (requester_id, addressee_id, created_date, status) " +
+                "INSERT INTO \"friendship\"  (requester_id, addressee_id, created_date, status) " +
                         "VALUES (?, ?, ?, ?)",
                 new BatchPreparedStatementSetter() {
                     @Override
@@ -128,7 +128,7 @@ public class UserdataUserUserRepositorySpringJdbc implements UserdataUserReposit
     public void remove(UserEntity user) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.userdataJdbcUrl()));
         jdbcTemplate.update(
-                "delete from \"user\" where id=?",
+                "DELETE FROM \"user\" WHERE id=?",
                 user.getId()
         );
     }
