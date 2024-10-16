@@ -70,6 +70,7 @@ public class UsersRestClient implements UsersClient {
                 String username = randomUsername();
                 UserJson addressee = createUser(username, "12345");
                 usersApi.sendInvitation(requester.username(), addressee.username());
+                usersApi.sendInvitation(addressee.username(), requester.username());
                 usersApi.acceptInvitation(requester.username(), addressee.username());
                 addedFriends.add(addressee);
             }
