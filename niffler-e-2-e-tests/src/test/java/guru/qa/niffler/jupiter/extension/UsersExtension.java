@@ -55,18 +55,12 @@ public class UsersExtension implements BeforeEachCallback, ParameterResolver {
                                 usersClient.createIncomeInvitation(user, userAnno.incomeInvitations());
                         user.testData().income().addAll(incomeInvitation.stream().map(UserJson::username).toList());
 
-                        System.out.println("Income invitations: " + user.testData().income().size());
-
                         List<UserJson> outcomeInvitation =
                                 usersClient.createOutcomeInvitation(user, userAnno.outcomeInvitations());
                         user.testData().outcome().addAll(outcomeInvitation.stream().map(UserJson::username).toList());
 
-                        System.out.println("Outcome invitations: " + user.testData().outcome().size());
-
-
                         List<UserJson> addedFriends = usersClient.addFriend(user, userAnno.addedFriends());
                         user.testData().addedFriends().addAll(addedFriends.stream().map(UserJson::username).toList());
-                        System.out.println("AddedFriends: " + user.testData().addedFriends().size());
                 });
     }
 

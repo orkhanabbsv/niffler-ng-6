@@ -36,10 +36,10 @@ public class FriendsWebTest {
   }
 
   @User(
-          incomeInvitations = 1
+          outcomeInvitations = 1
   )
   @Test
-  void incomeInvitationBePresentInFriendsTable(UserJson user) {
+  void outcomeInvitationBePresentInFriendsTable(UserJson user) {
     Selenide.open(CFG.frontUrl(), LoginPage.class)
         .successLogin(user.username(), user.testData().password())
         .checkThatPageLoaded()
@@ -48,10 +48,10 @@ public class FriendsWebTest {
   }
 
   @User(
-          outcomeInvitations = 1
+          incomeInvitations = 1
   )
   @Test
-  void outcomeInvitationBePresentInAllPeoplesTable(UserJson user) {
+  void incomeInvitationBePresentInAllPeoplesTable(UserJson user) {
     Selenide.open(CFG.frontUrl(), LoginPage.class)
         .successLogin(user.username(), user.testData().password())
         .checkThatPageLoaded()
