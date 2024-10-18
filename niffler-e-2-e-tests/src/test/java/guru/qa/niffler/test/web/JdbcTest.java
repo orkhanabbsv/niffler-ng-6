@@ -8,6 +8,7 @@ import guru.qa.niffler.service.SpendClient;
 import guru.qa.niffler.service.SpendDbClient;
 import guru.qa.niffler.service.UsersClient;
 import guru.qa.niffler.service.UsersDbClient;
+import guru.qa.niffler.service.UsersRestClient;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
@@ -19,6 +20,22 @@ import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 public class JdbcTest {
     private final UsersClient usersDbClient = new UsersDbClient();
     private final SpendClient client = new SpendDbClient();
+    private final UsersRestClient usersRestClient = new UsersRestClient();
+
+    @Test
+    void createUser() {
+        usersRestClient.createUser(randomUsername(), "12345");
+    }
+
+    @Test
+    void sendInvitationsAndAddFriend() {
+
+        String username = randomUsername();
+        System.out.println(username);
+        UserJson user = usersRestClient.createUser(username, "12345");
+
+        usersRestClient.addFriend(user, 1);
+    }
 
     @Test
     void txTest() {

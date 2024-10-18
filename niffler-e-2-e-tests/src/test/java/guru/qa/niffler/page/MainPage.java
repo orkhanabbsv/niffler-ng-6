@@ -2,6 +2,7 @@ package guru.qa.niffler.page;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import org.openqa.selenium.Keys;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
@@ -14,6 +15,8 @@ public class MainPage {
   private final ElementsCollection tableRows = $("#spendings tbody").$$("tr");
   private final SelenideElement statComponent = $("#stat");
   private final SelenideElement spendingTable = $("#spendings");
+  private final SelenideElement searchField = $("input[type='text']");
+
 
   public FriendsPage friendsPage() {
     header.$("button").click();
@@ -39,6 +42,12 @@ public class MainPage {
   public MainPage checkThatPageLoaded() {
     statComponent.should(visible).shouldHave(text("Statistics"));
     spendingTable.should(visible).shouldHave(text("History of Spendings"));
+    return this;
+  }
+
+  public MainPage search(String spend) {
+    searchField.sendKeys(spend);
+    searchField.sendKeys(Keys.ENTER);
     return this;
   }
 }

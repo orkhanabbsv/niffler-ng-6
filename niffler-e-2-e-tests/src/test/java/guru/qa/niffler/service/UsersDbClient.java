@@ -15,7 +15,9 @@ import guru.qa.niffler.model.UserJson;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -66,12 +68,12 @@ public class UsersDbClient implements UsersClient {
     }
 
     @Override
-    public void createIncomeInvitation(UserJson requester, int count) {
+    public List<UserJson> createIncomeInvitation(UserJson requester, int count) {
+        List<UserJson> incomeUsers = new ArrayList<>();
         if (count > 0) {
             UserEntity targetEntity = userdataUserRepository.findById(
                     requester.id()
             ).orElseThrow();
-
             for (int i = 0; i < count; i++) {
                 xaTransactionTemplate.execute(() -> {
                             String username = randomUsername();
@@ -79,15 +81,18 @@ public class UsersDbClient implements UsersClient {
                             authUserRepository.create(authUser);
                             UserEntity adressee = userdataUserRepository.create(userEntity(username));
                             userdataUserRepository.sendInvitation(targetEntity, adressee);
+                            incomeUsers.add(UserJson.fromEntity(adressee, null));
                             return null;
                         }
                 );
             }
         }
+        return incomeUsers;
     }
 
     @Override
-    public void createOutcomeInvitation(UserJson requester, int count) {
+    public List<UserJson> createOutcomeInvitation(UserJson requester, int count) {
+        List<UserJson> outcomeInvitations = new ArrayList<>();
         if (count > 0) {
             UserEntity adressee = userdataUserRepository.findById(
                     requester.id()
@@ -100,15 +105,18 @@ public class UsersDbClient implements UsersClient {
                             authUserRepository.create(authUser);
                             UserEntity targetEntity = userdataUserRepository.create(userEntity(username));
                             userdataUserRepository.sendInvitation(targetEntity, adressee);
+                            outcomeInvitations.add(UserJson.fromEntity(targetEntity, null));
                             return null;
                         }
                 );
             }
         }
+        return outcomeInvitations;
     }
 
     @Override
-    public void addFriend(UserJson targetUser, int count) {
+    public List<UserJson> addFriend(UserJson targetUser, int count) {
+        List<UserJson> addedFriends = new ArrayList<>();
         if (count > 0) {
             UserEntity targetEntity = userdataUserRepository.findById(
                     targetUser.id()
@@ -126,6 +134,7 @@ public class UsersDbClient implements UsersClient {
                 );
             }
         }
+        return addedFriends;
     }
 
     public void addFriend(UserJson targetUser, UserJson addedFriend) {
