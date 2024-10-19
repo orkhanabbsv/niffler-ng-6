@@ -4,6 +4,7 @@ import com.atomikos.icatch.jta.UserTransactionImp;
 import jakarta.transaction.SystemException;
 import jakarta.transaction.UserTransaction;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
@@ -21,7 +22,7 @@ public class XaTransactionTemplate {
     return this;
   }
 
-  public <T> T execute(Supplier<T>... actions) {
+  public @Nonnull <T> T execute(Supplier<T>... actions) {
     UserTransaction ut = new UserTransactionImp();
     try {
       ut.begin();

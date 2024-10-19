@@ -29,12 +29,21 @@ public class JdbcTest {
 
     @Test
     void sendInvitationsAndAddFriend() {
-
         String username = randomUsername();
         System.out.println(username);
         UserJson user = usersRestClient.createUser(username, "12345");
 
         usersRestClient.addFriend(user, 1);
+    }
+
+    @Test
+    void sendInvitations() {
+        String username = randomUsername();
+        System.out.println(username);
+        UserJson user = usersRestClient.createUser(username, "12345");
+
+        usersRestClient.createIncomeInvitation(user, 1);
+        usersRestClient.createOutcomeInvitation(user, 1);
     }
 
     @Test
