@@ -3,6 +3,7 @@ package guru.qa.niffler.service;
 import guru.qa.niffler.api.RegistrationApiClient;
 import guru.qa.niffler.api.UsersApiClient;
 import guru.qa.niffler.model.UserJson;
+import io.qameta.allure.Step;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
@@ -18,22 +19,26 @@ public class UsersRestClient implements UsersClient {
     private final RegistrationApiClient registrationApi = new RegistrationApiClient();
     private final UsersApiClient usersApi = new UsersApiClient();
 
+    @Step("Создать пользователя с данными username: {username} и паролем: {password}")
     @Override
     public UserJson createUser(String username, String password) {
         registrationApi.registerUser(username, password);
         return usersApi.currentUser(username);
     }
 
+    @Step("Найти пользователя по id: {id}")
     @Override
     public Optional<UserJson> findById(UUID id) {
         throw new UnsupportedOperationException();
     }
 
+    @Step("Найти пользователя по имени: {username}")
     @Override
     public Optional<UserJson> findByUsername(String username) {
         return Optional.ofNullable(usersApi.allUsers(username).getFirst());
     }
 
+    @Step("Создать приглашения в количестве: {count}")
     @Override
     public List<UserJson> createIncomeInvitation(UserJson requester, int count) {
         List<UserJson> incomes = new ArrayList<>();
@@ -49,6 +54,7 @@ public class UsersRestClient implements UsersClient {
         return incomes;
     }
 
+    @Step("Создать приглашения в количестве: {count}")
     @Override
     public List<UserJson> createOutcomeInvitation(UserJson requester, int count) {
         List<UserJson> outcomeInvitations = new ArrayList<>();
@@ -64,6 +70,7 @@ public class UsersRestClient implements UsersClient {
         return outcomeInvitations;
     }
 
+    @Step("Добавить друзей в количестве: {count}")
     @Override
     public List<UserJson> addFriend(UserJson requester, int count) {
         List<UserJson> addedFriends = new ArrayList<>();
@@ -80,6 +87,7 @@ public class UsersRestClient implements UsersClient {
         return addedFriends;
     }
 
+    @Step("Удалить пользоветеля")
     @Override
     public void deleteUser(UserJson user) {
         throw new UnsupportedOperationException();

@@ -44,6 +44,26 @@ class SpendingWebTest {
         new MainPage().checkThatTableContainsSpending(newDescription);
     }
 
+    @User(
+            spendings = {
+                    @Spending(
+                            category = "Обучение-1",
+                            description = "Новое обучение-1",
+                            amount = 6994
+                    )
+            }
+    )
+    @Test
+    void searchSpend(UserJson userJson) {
+
+        Selenide.open(CFG.frontUrl(), LoginPage.class)
+                .successLogin(userJson.username(), userJson.testData().password())
+                .getSpendingTable()
+                .selectPeriod("Today")
+                .searchSpendingByDescription(userJson.testData().spendings().getFirst().description())
+                .checkTableContains(userJson.testData().spendings().getFirst().description());
+    }
+
     @User
     @Test
     void addSpendTest(UserJson user) {

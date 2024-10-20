@@ -15,11 +15,12 @@ import static com.codeborne.selenide.Selenide.$$;
 public class SpendingTable {
     private final SelenideElement spends = $(".MuiTableContainer-root");
     private static final ElementsCollection timePeriods = $$("[role='option']");
-    private final SelenideElement deleteButton = $("#delete");
 
-    private static final String deleteConfirmButton = ".MuiDialogActions-spacing [type='button']:nth-child(2)";
-    private static final String spendingRow = "tbody tr";
-    private static final String spendingColumn = "td:nth-child(4)";
+    private static final String deleteConfirmButton
+            = ".MuiPaper-root button.MuiButtonBase-root.MuiButton-containedPrimary";
+    private static final String spendingRow = "tr";
+
+    private final SearchField searchField = new SearchField();
 
     @Step("Выбор периода для отображения трат: {period}")
     public SpendingTable selectPeriod(String period) {
@@ -36,25 +37,25 @@ public class SpendingTable {
 
     @Step("Удаление траты с описанием: {description}")
     public SpendingTable deleteSpending(String description) {
-        spends.$(spendingRow).$$("tr").find(text(description)).$$("td").get(1).click();
-        deleteButton.shouldBe(visible).click();
+        spends.$$(spendingRow).find(text(description)).$$("td").get(1).click();
+        spends.$("#delete").shouldBe(visible).click();
         $(deleteConfirmButton).shouldBe(visible).click();
         return this;
     }
 
     @Step("Поиск траты с описанием: {description}")
     public SpendingTable searchSpendingByDescription(String description) {
-        spends.$(spendingRow).$$("tr").find(text(description)).shouldBe(visible);
+        searchField.search(description);
         return this;
     }
 
-    @Step("Проверка, что таблица содержит трату(ы): {expectedSpends}")
+    @Step("Проверка что таблица содержит трату: {expectedSpends}")
     public SpendingTable checkTableContains(String... expectedSpends) {
-        spends.$(spendingRow).$("td").$$(spendingColumn).shouldHave(textsInAnyOrder(expectedSpends));
+        spends.$$("td:nth-child(4)").shouldHave(textsInAnyOrder(expectedSpends));
         return this;
     }
 
-    @Step("Проверка, что количество трат равно: {expectedSize}")
+    @Step("Проверка что количество трат равно: {expectedSize}")
     public SpendingTable checkTableSize(int expectedSize) {
         spends.$(spendingRow).$$("tr").shouldHave(size(expectedSize));
         return this;

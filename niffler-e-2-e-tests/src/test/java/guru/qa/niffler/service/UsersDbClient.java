@@ -12,6 +12,7 @@ import guru.qa.niffler.data.repository.impl.UserdataUserRepositoryHibernate;
 import guru.qa.niffler.data.tpl.XaTransactionTemplate;
 import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.UserJson;
+import io.qameta.allure.Step;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -38,6 +39,7 @@ public class UsersDbClient implements UsersClient {
             CFG.userdataJdbcUrl()
     );
 
+    @Step("Создать пользователя с данными username: {username} и паролем: {password}")
     @Override
     public UserJson createUser(String username, String password) {
         return xaTransactionTemplate.execute(() -> {
@@ -50,6 +52,7 @@ public class UsersDbClient implements UsersClient {
         });
     }
 
+    @Step("Найти пользователя по id: {id}")
     @Override
     public Optional<UserJson> findById(UUID id) {
         return xaTransactionTemplate.execute(() -> {
@@ -59,6 +62,7 @@ public class UsersDbClient implements UsersClient {
         );
     }
 
+    @Step("Найти пользователя по имени: {username}")
     @Override
     public Optional<UserJson> findByUsername(String username) {
         return xaTransactionTemplate.execute(() -> {
@@ -68,6 +72,7 @@ public class UsersDbClient implements UsersClient {
         );
     }
 
+    @Step("Создать приглашения в количестве: {count}")
     @Override
     public List<UserJson> createIncomeInvitation(UserJson requester, int count) {
         List<UserJson> incomeUsers = new ArrayList<>();
@@ -91,6 +96,7 @@ public class UsersDbClient implements UsersClient {
         return incomeUsers;
     }
 
+    @Step("Создать приглашения в количестве: {count}")
     @Override
     public List<UserJson> createOutcomeInvitation(UserJson requester, int count) {
         List<UserJson> outcomeInvitations = new ArrayList<>();
@@ -115,6 +121,7 @@ public class UsersDbClient implements UsersClient {
         return outcomeInvitations;
     }
 
+    @Step("Добавить друзей в количестве: {count}")
     @Override
     public List<UserJson> addFriend(UserJson targetUser, int count) {
         List<UserJson> addedFriends = new ArrayList<>();
@@ -186,6 +193,7 @@ public class UsersDbClient implements UsersClient {
         );
     }
 
+    @Step("Удалить пользоветеля")
     @Override
     public void deleteUser(UserJson user) {
         xaTransactionTemplate.execute(() -> {
