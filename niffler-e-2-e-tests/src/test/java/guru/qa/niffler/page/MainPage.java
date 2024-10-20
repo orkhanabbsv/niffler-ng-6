@@ -2,7 +2,10 @@ package guru.qa.niffler.page;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
-import org.openqa.selenium.Keys;
+import guru.qa.niffler.page.component.Header;
+import guru.qa.niffler.page.component.SpendingTable;
+import io.qameta.allure.Step;
+import lombok.Getter;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
@@ -10,44 +13,21 @@ import static com.codeborne.selenide.Selenide.$;
 
 public class MainPage {
 
-  private final SelenideElement header = $("#root header");
-  private final SelenideElement headerMenu = $("ul[role='menu']");
   private final ElementsCollection tableRows = $("#spendings tbody").$$("tr");
   private final SelenideElement statComponent = $("#stat");
-  private final SelenideElement spendingTable = $("#spendings");
-  private final SelenideElement searchField = $("input[type='text']");
+  @Getter
+  private final Header header = new Header();
+  @Getter
+  private final SpendingTable spendingTable = new SpendingTable();
 
-
-  public FriendsPage friendsPage() {
-    header.$("button").click();
-    headerMenu.$$("li").find(text("Friends")).click();
-    return new FriendsPage();
-  }
-
-  public PeoplePage allPeoplesPage() {
-    header.$("button").click();
-    headerMenu.$$("li").find(text("All People")).click();
-    return new PeoplePage();
-  }
-
-  public EditSpendingPage editSpending(String spendingDescription) {
-    tableRows.find(text(spendingDescription)).$$("td").get(5).click();
-    return new EditSpendingPage();
-  }
-
+  @Step("Проверка наличия траты: {spendingDescription}")
   public void checkThatTableContainsSpending(String spendingDescription) {
     tableRows.find(text(spendingDescription)).should(visible);
   }
 
+  @Step("Проверка загрузки главной страницы")
   public MainPage checkThatPageLoaded() {
     statComponent.should(visible).shouldHave(text("Statistics"));
-    spendingTable.should(visible).shouldHave(text("History of Spendings"));
-    return this;
-  }
-
-  public MainPage search(String spend) {
-    searchField.sendKeys(spend);
-    searchField.sendKeys(Keys.ENTER);
     return this;
   }
 }

@@ -3,10 +3,12 @@ package guru.qa.niffler.service;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.SpendJson;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@ParametersAreNonnullByDefault
 public class SpendRestClient implements SpendClient {
     private final guru.qa.niffler.api.SpendApiClient apiClient = new guru.qa.niffler.api.SpendApiClient();
 

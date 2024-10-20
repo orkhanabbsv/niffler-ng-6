@@ -9,7 +9,7 @@ import guru.qa.niffler.page.LoginPage;
 import org.junit.jupiter.api.Test;
 
 @WebTest
-public class FriendsWebTest {
+class FriendsWebTest {
 
   private static final Config CFG = Config.getInstance();
 
@@ -21,7 +21,8 @@ public class FriendsWebTest {
     Selenide.open(CFG.frontUrl(), LoginPage.class)
         .successLogin(user.username(), user.testData().password())
         .checkThatPageLoaded()
-        .friendsPage()
+        .getHeader()
+        .toFriendsPage()
         .checkExistingFriends(user.testData().addedFriends());
   }
 
@@ -31,7 +32,8 @@ public class FriendsWebTest {
     Selenide.open(CFG.frontUrl(), LoginPage.class)
         .successLogin(user.username(), user.testData().password())
         .checkThatPageLoaded()
-        .friendsPage()
+        .getHeader()
+        .toFriendsPage()
         .checkNoExistingFriends();
   }
 
@@ -43,7 +45,8 @@ public class FriendsWebTest {
     Selenide.open(CFG.frontUrl(), LoginPage.class)
         .successLogin(user.username(), user.testData().password())
         .checkThatPageLoaded()
-        .friendsPage()
+        .getHeader()
+        .toFriendsPage()
         .checkExistingInvitations(user.testData().income());
   }
 
@@ -55,7 +58,33 @@ public class FriendsWebTest {
     Selenide.open(CFG.frontUrl(), LoginPage.class)
         .successLogin(user.username(), user.testData().password())
         .checkThatPageLoaded()
-        .allPeoplesPage()
+        .getHeader()
+        .toAllPeoplesPage()
         .checkInvitationSentToUser(user.testData().outcome());
+  }
+
+  @User(
+          outcomeInvitations = 1
+  )
+  @Test
+  void acceptInvitation(UserJson user) {
+      Selenide.open(CFG.frontUrl(), LoginPage.class)
+              .successLogin(user.username(), user.testData().password())
+              .getHeader()
+              .toFriendsPage()
+              .acceptFriend();
+  }
+
+  @User(
+          outcomeInvitations = 1
+  )
+  @Test
+  void declineInvitation(UserJson user) {
+      Selenide.open(CFG.frontUrl(), LoginPage.class)
+              .successLogin(user.username(), user.testData().password())
+              .getHeader()
+              .toFriendsPage()
+              .declineFriend()
+              .checkNoExistingFriends();
   }
 }

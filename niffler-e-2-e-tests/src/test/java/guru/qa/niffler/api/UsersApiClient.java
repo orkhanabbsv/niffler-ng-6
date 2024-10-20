@@ -6,11 +6,15 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@ParametersAreNonnullByDefault
 public class UsersApiClient {
 
     private final Retrofit retrofit = new Retrofit.Builder()
@@ -21,7 +25,7 @@ public class UsersApiClient {
     private final UsersApi usersApi = retrofit.create(UsersApi.class);
 
 
-    public UserJson currentUser(String username) {
+    public @Nullable UserJson currentUser(String username) {
         final Response<UserJson> response;
         try {
             response = usersApi.currentUser(username)
@@ -42,10 +46,12 @@ public class UsersApiClient {
             throw new AssertionError(e);
         }
         assertEquals(200, response.code());
-        return response.body();
+        return response.body() != null
+                ? response.body()
+                : Collections.emptyList();
     }
 
-    public UserJson updateUserInfo(UserJson user) {
+    public @Nullable UserJson updateUserInfo(UserJson user) {
         final Response<UserJson> response;
         try {
             response = usersApi.updateUserInfo(user)
@@ -57,7 +63,7 @@ public class UsersApiClient {
         return response.body();
     }
 
-    public UserJson sendInvitation(String username, String targetUsername) {
+    public @Nullable UserJson sendInvitation(String username, String targetUsername) {
         final Response<UserJson> response;
         try {
             response = usersApi.sendInvitation(username, targetUsername)
@@ -69,7 +75,7 @@ public class UsersApiClient {
         return response.body();
     }
 
-    public UserJson acceptInvitation(String username, String targetUsername) {
+    public @Nullable UserJson acceptInvitation(String username, String targetUsername) {
         final Response<UserJson> response;
         try {
             response = usersApi.acceptInvitation(username, targetUsername)

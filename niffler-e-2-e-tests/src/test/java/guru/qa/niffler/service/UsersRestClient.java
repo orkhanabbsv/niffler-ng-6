@@ -4,6 +4,7 @@ import guru.qa.niffler.api.RegistrationApiClient;
 import guru.qa.niffler.api.UsersApiClient;
 import guru.qa.niffler.model.UserJson;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -11,6 +12,7 @@ import java.util.UUID;
 
 import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 
+@ParametersAreNonnullByDefault
 public class UsersRestClient implements UsersClient {
 
     private final RegistrationApiClient registrationApi = new RegistrationApiClient();

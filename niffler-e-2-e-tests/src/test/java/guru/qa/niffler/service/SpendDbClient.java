@@ -9,11 +9,12 @@ import guru.qa.niffler.data.tpl.XaTransactionTemplate;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.SpendJson;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-
+@ParametersAreNonnullByDefault
 public class SpendDbClient implements SpendClient {
 
     private static final Config CFG = Config.getInstance();
