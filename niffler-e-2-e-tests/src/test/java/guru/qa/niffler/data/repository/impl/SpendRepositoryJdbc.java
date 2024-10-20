@@ -59,12 +59,12 @@ public class SpendRepositoryJdbc implements SpendRepository {
     @Override
     public SpendEntity update(SpendEntity spend) {
         try (PreparedStatement ps = holder(CFG.spendJdbcUrl()).connection().prepareStatement(
-                "update \"spend\" " +
-                        "set spend_date = ?," +
+                "UPDATE \"spend\" " +
+                        "SET spend_date = ?," +
                         "currency = ?," +
                         "amount = ?," +
                         "description = ? " +
-                        "where id = ?"
+                        "WHERE id = ?"
         )) {
             ps.setDate(1, new Date(spend.getSpendDate().getTime()));
             ps.setObject(2, spend.getCurrency());
@@ -139,7 +139,7 @@ public class SpendRepositoryJdbc implements SpendRepository {
     @Override
     public Optional<CategoryEntity> findCategoryByUsernameAndSpendName(String username, String name) {
         try (PreparedStatement ps = holder(CFG.spendJdbcUrl()).connection().prepareStatement(
-                "select * from \"category\" where username=? and name=?"
+                "SELECT * FROM \"category\" WHERE username=? AND name=?"
         )) {
             ps.setString(1, username);
             ps.setString(2, name);
@@ -190,7 +190,7 @@ public class SpendRepositoryJdbc implements SpendRepository {
     @Override
     public List<SpendEntity> findByUsernameAndSpendDescription(String username, String description) {
         try (PreparedStatement ps = holder(CFG.spendJdbcUrl()).connection().prepareStatement(
-                "select * from \"spend\" where username=? and description=?"
+                "SELECT * FROM \"spend\" WHERE username=? AND description=?"
         )) {
             ps.setString(1, username);
             ps.setString(2, description);
@@ -214,7 +214,7 @@ public class SpendRepositoryJdbc implements SpendRepository {
     @Override
     public void remove(SpendEntity spend) {
         try (PreparedStatement ps = holder(CFG.spendJdbcUrl()).connection().prepareStatement(
-                "delete from \"spend\" where id=?"
+                "DELETE FROM \"spend\" WHERE id=?"
         )) {
             ps.setObject(1, spend.getId());
             ps.execute();
@@ -226,10 +226,10 @@ public class SpendRepositoryJdbc implements SpendRepository {
     @Override
     public void removeCategory(CategoryEntity category) {
         try (PreparedStatement psSpend = holder(CFG.spendJdbcUrl()).connection().prepareStatement(
-                "delete from \"spend\" where category_id=?"
+                "DELETE FROM \"spend\" WHERE category_id=?"
         );
              PreparedStatement psCategory = holder(CFG.spendJdbcUrl()).connection().prepareStatement(
-                     "delete from \"category\" where id=?"
+                     "DELETE FROM \"category\" WHERE id=?"
              )) {
             psSpend.setObject(1, category.getId());
             psSpend.execute();

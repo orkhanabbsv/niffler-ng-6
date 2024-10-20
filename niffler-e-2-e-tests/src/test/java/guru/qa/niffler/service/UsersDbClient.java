@@ -138,6 +138,54 @@ public class UsersDbClient implements UsersClient {
         return addedFriends;
     }
 
+    public void addFriend(UserJson targetUser, UserJson addedFriend) {
+        UserEntity targetEntity = userdataUserRepository.findById(
+                targetUser.id()
+        ).orElseThrow();
+
+        UserEntity addedFriendEntity = userdataUserRepository.findById(
+                addedFriend.id()
+        ).orElseThrow();
+
+        xaTransactionTemplate.execute(() -> {
+                    userdataUserRepository.addFriend(targetEntity, addedFriendEntity);
+                    return null;
+                }
+        );
+    }
+
+    public void createIncomeInvitation(UserJson targetUser, UserJson addressee) {
+        UserEntity targetEntity = userdataUserRepository.findById(
+                targetUser.id()
+        ).orElseThrow();
+
+        UserEntity addresseeEntity = userdataUserRepository.findById(
+                addressee.id()
+        ).orElseThrow();
+
+        xaTransactionTemplate.execute(() -> {
+                    userdataUserRepository.sendInvitation(targetEntity, addresseeEntity);
+                    return null;
+                }
+        );
+    }
+
+    public void createOutcomeInvitation(UserJson targetUser, UserJson requester) {
+        UserEntity targetEntity = userdataUserRepository.findById(
+                targetUser.id()
+        ).orElseThrow();
+
+        UserEntity requesterEntity = userdataUserRepository.findById(
+                requester.id()
+        ).orElseThrow();
+
+        xaTransactionTemplate.execute(() -> {
+                    userdataUserRepository.sendInvitation(requesterEntity, targetEntity);
+                    return null;
+                }
+        );
+    }
+
     @Override
     public void deleteUser(UserJson user) {
         xaTransactionTemplate.execute(() -> {

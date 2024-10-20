@@ -57,12 +57,12 @@ public class SpendRepositorySpringJdbc implements SpendRepository {
         jdbcTemplate.update(con -> {
                     PreparedStatement ps = con.prepareStatement(
                             """
-                                         update "spend"
-                                            set spend_date = ?,
+                                         UPDATE "spend"
+                                            SET spend_date = ?,
                                             currency = ?,
                                             amount = ?,
                                             description = ?
-                                            where id = ?
+                                            WHERE id = ?
                                     """
                     );
                     ps.setDate(1, new Date(spend.getSpendDate().getTime()));
@@ -126,7 +126,7 @@ public class SpendRepositorySpringJdbc implements SpendRepository {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.spendJdbcUrl()));
         return Optional.ofNullable(jdbcTemplate.queryForObject(
                         """
-                                select * from "category" where username=? and name=?
+                                SELECT * FROM "category" WHERE username=? AND name=?
                                    """,
                         CategoryEntityRowMapper.instance,
                         username,
@@ -140,7 +140,7 @@ public class SpendRepositorySpringJdbc implements SpendRepository {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.spendJdbcUrl()));
         return Optional.ofNullable(jdbcTemplate.queryForObject(
                         """
-                                select * from "spend" where username=? and name=?
+                                SELECT * FROM "spend" WHERE username=? AND name=?
                                 """,
                         SpendEntityRowMapper.instance,
                         id
@@ -153,7 +153,7 @@ public class SpendRepositorySpringJdbc implements SpendRepository {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.spendJdbcUrl()));
         return jdbcTemplate.query(
                 """
-                        select * from "spend" where username=? and description=?
+                        SELECT * FROM "spend" WHERE username=? AND description=?
                         """,
                 SpendEntityRowMapper.instance,
                 username,
@@ -166,7 +166,7 @@ public class SpendRepositorySpringJdbc implements SpendRepository {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.spendJdbcUrl()));
         jdbcTemplate.update(
                 """
-                        delete * from "spend" where id=?
+                        DELETE FROM "spend" WHERE id=?
                         """,
                 spend.getId()
         );
@@ -177,14 +177,14 @@ public class SpendRepositorySpringJdbc implements SpendRepository {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.spendJdbcUrl()));
         jdbcTemplate.update(
                 """
-                        delete from "spend" where category_id=?
+                        DELETE FROM "spend" WHERE category_id=?
                         """,
                 category.getId()
         );
 
         jdbcTemplate.update(
                 """
-                        delete from "category" where id=?
+                        DELETE FROM "category" WHERE id=?
                         """,
                 category.getId()
         );

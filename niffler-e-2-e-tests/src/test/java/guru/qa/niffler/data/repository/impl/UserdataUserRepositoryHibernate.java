@@ -34,7 +34,7 @@ public class UserdataUserRepositoryHibernate implements UserdataUserRepository {
         entityManager.joinTransaction();
         return Optional.ofNullable(
                 entityManager.createQuery(
-                                "select u from UserEntity u where u.username =: username",
+                                "SELECT u FROM UserEntity u WHERE u.username =: username",
                                 UserEntity.class
                         ).setParameter("username", username)
                         .getSingleResult()

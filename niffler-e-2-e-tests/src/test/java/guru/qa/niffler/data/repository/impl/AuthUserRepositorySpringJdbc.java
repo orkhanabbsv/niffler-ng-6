@@ -66,13 +66,13 @@ public class AuthUserRepositorySpringJdbc implements AuthUserRepository {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.userdataJdbcUrl()));
         jdbcTemplate.update(con -> {
             PreparedStatement userPs = con.prepareStatement(
-                    "update \"user\" " +
-                            "set password = ?, " +
+                    "UPDATE \"user\" " +
+                            "SET password = ?, " +
                             "enabled = ?," +
                             "account_non_expired = ?," +
                             "account_non_locked = ?," +
                             "credentials_non_expired = ?," +
-                            "where id = ?"
+                            "WHERE id = ?"
             );
             userPs.setString(1, user.getPassword());
             userPs.setBoolean(2, user.getEnabled());
@@ -84,7 +84,7 @@ public class AuthUserRepositorySpringJdbc implements AuthUserRepository {
         });
 
         jdbcTemplate.update(
-                "delete from \"authority\" where user_id=?",
+                "DELETE FROM \"authority\" WHERE user_id=?",
                 user.getId()
         );
 
@@ -112,7 +112,7 @@ public class AuthUserRepositorySpringJdbc implements AuthUserRepository {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authJdbcUrl()));
         return Optional.ofNullable(
                 jdbcTemplate.query(
-                        "select * from \"user\" u join authority a on u.id = a.user_id where u.id = ?",
+                        "SELECT * FROM \"user\" u JOIN authority a ON u.id = a.user_id WHERE u.id = ?",
                         AuthUserEntityResultSetExtractor.instance,
                         id
                 )
@@ -124,7 +124,7 @@ public class AuthUserRepositorySpringJdbc implements AuthUserRepository {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authJdbcUrl()));
         return Optional.ofNullable(
                 jdbcTemplate.query(
-                        "select * from \"user\" u join authority a on u.id = a.user_id where u.username = ?",
+                        "SELECT * FROM \"user\" u JOIN authority a ON u.id = a.user_id WHERE u.username = ?",
                         AuthUserEntityResultSetExtractor.instance,
                         username
                 )
@@ -135,7 +135,7 @@ public class AuthUserRepositorySpringJdbc implements AuthUserRepository {
     public void remove(AuthUserEntity authUser) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authJdbcUrl()));
         jdbcTemplate.update(
-                "delete from \"user\" u join authority a on u.id = a.user_id where u.id = ?",
+                "DELETE FROM \"user\" u JOIN authority a ON u.id = a.user_id WHERE u.id = ?",
                 authUser.getId()
         );
     }

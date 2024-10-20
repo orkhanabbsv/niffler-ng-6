@@ -57,7 +57,7 @@ public class UserdataUserUserRepositoryJdbc implements UserdataUserRepository {
     @Override
     public Optional<UserEntity> findById(UUID id) {
         try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
-                "select * from \"user\" where u.id = ?"
+                "SELECT * FROM \"user\" WHERE u.id = ?"
         )) {
             ps.setObject(1, id);
             ps.execute();
@@ -84,7 +84,7 @@ public class UserdataUserUserRepositoryJdbc implements UserdataUserRepository {
     @Override
     public void sendInvitation(UserEntity requester, UserEntity addressee) {
         try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
-                "insert into \"friendship\" (requester_id, addressee_id, created_date, status) " +
+                "INSERT INTO \"friendship\" (requester_id, addressee_id, created_date, status) " +
                         "VALUES (?, ?, ?, ?)"
         )) {
             Date now = Date.valueOf(LocalDate.now());
@@ -103,7 +103,7 @@ public class UserdataUserUserRepositoryJdbc implements UserdataUserRepository {
     @Override
     public void addFriend(UserEntity requester, UserEntity addressee) {
         try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
-                "insert into \"friendship\"  (requester_id, addressee_id, created_date, status) " +
+                "INSERT INTO \"friendship\"  (requester_id, addressee_id, created_date, status) " +
                         "VALUES (?, ?, ?, ?)"
         )) {
             Date now = Date.valueOf(LocalDate.now());
@@ -130,7 +130,7 @@ public class UserdataUserUserRepositoryJdbc implements UserdataUserRepository {
     @Override
     public void remove(UserEntity user) {
         try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
-                "delete from \"user\" where id=?"
+                "DELETE FROM \"user\" WHERE id=?"
         )) {
             ps.setObject(1, user.getId());
             ps.execute();
@@ -142,7 +142,7 @@ public class UserdataUserUserRepositoryJdbc implements UserdataUserRepository {
     @Override
     public Optional<UserEntity> findByUsername(String username) {
         try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
-                "select * from \"user\" where username=?"
+                "SELECT * FROM \"user\" WHERE username=?"
         )) {
             ps.setObject(1, username);
             ps.execute();
