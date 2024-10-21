@@ -1,5 +1,6 @@
 package guru.qa.niffler.data.tpl;
 
+import javax.annotation.Nullable;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -21,7 +22,7 @@ public class JdbcTransactionTemplate {
     return this;
   }
 
-  public <T> T execute(Supplier<T> action, int isolationLvl) {
+  public @Nullable <T> T execute(Supplier<T> action, int isolationLvl) {
     Connection connection = null;
     try {
       connection = holder.connection();

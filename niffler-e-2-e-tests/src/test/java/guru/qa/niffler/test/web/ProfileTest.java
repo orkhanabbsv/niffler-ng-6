@@ -10,6 +10,8 @@ import guru.qa.niffler.page.LoginPage;
 import guru.qa.niffler.page.ProfilePage;
 import org.junit.jupiter.api.Test;
 
+import static guru.qa.niffler.utils.RandomDataUtils.randomName;
+
 @WebTest
 class ProfileTest {
 
@@ -45,5 +47,18 @@ class ProfileTest {
 
     Selenide.open(CFG.frontUrl() + "profile", ProfilePage.class)
         .checkCategoryExists(user.testData().categories().getFirst().name());
+  }
+
+  @User
+  @Test
+  void changeName(UserJson user) {
+    String name = randomName();
+
+    Selenide.open(CFG.frontUrl(), LoginPage.class)
+            .successLogin(user.username(), user.testData().password())
+            .getHeader()
+            .toProfilePage()
+            .setName(name)
+            .checkName(name);
   }
 }

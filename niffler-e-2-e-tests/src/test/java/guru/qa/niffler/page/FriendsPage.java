@@ -1,47 +1,64 @@
 package guru.qa.niffler.page;
 
 import com.codeborne.selenide.SelenideElement;
-import org.openqa.selenium.Keys;
+import guru.qa.niffler.page.component.SearchField;
+import io.qameta.allure.Step;
+import lombok.Getter;
 
 import java.util.List;
 
 import static com.codeborne.selenide.CollectionCondition.size;
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 
 public class FriendsPage {
 
-  private final SelenideElement peopleTab = $("a[href='/people/friends']");
-  private final SelenideElement allTab = $("a[href='/people/all']");
   private final SelenideElement requestsTable = $("#requests");
   private final SelenideElement friendsTable = $("#friends");
-  private final SelenideElement searchField = $("input[type='text']");
+  private final SelenideElement acceptButton = $(byText("Accept"));
+  private final SelenideElement declineButton = $(byText("Decline"));
+  private final SelenideElement confirmDeclineButton =
+          $(".MuiPaper-root button.MuiButtonBase-root.MuiButton-containedPrimary");
 
+  @Getter
+  private final SearchField searchField = new SearchField();
+
+  @Step("Проверка наличия имен в списке друзей")
   public FriendsPage checkExistingFriends(List<String> expectedUsernames) {
     for (String expectedUsername : expectedUsernames) {
-      searchFriend(expectedUsername);
+      searchField.search(expectedUsername);
       friendsTable.$$("tr").find(text(expectedUsername)).should(visible);
     }
     return this;
   }
 
+  @Step("Проверка отсутствия имен в списке друзей")
   public FriendsPage checkNoExistingFriends() {
     friendsTable.$$("tr").shouldHave(size(0));
     return this;
   }
 
+  @Step("Проверка наличия приглашения")
   public FriendsPage checkExistingInvitations(List<String> expectedUsernames) {
     for (String expectedUsername : expectedUsernames) {
-      searchFriend(expectedUsername);
+      searchField.search(expectedUsername);
       requestsTable.$$("tr").find(text(expectedUsername)).should(visible);
     }
     return this;
   }
 
-  public FriendsPage searchFriend(String username) {
-    searchField.sendKeys(username);
-    searchField.sendKeys(Keys.ENTER);
+  @Step("Принять заявку в друзья")
+  public FriendsPage acceptFriend() {
+    acceptButton.click();
+    return this;
+  }
+
+  @Step("Отклонить заявку в друзья")
+  public FriendsPage declineFriend() {
+    declineButton.click();
+    confirmDeclineButton.click();
     return this;
   }
 }
