@@ -1,5 +1,6 @@
 package guru.qa.niffler.service;
 
+import com.google.common.base.Stopwatch;
 import guru.qa.niffler.api.RegistrationApiClient;
 import guru.qa.niffler.api.UsersApiClient;
 import guru.qa.niffler.model.UserJson;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 
@@ -23,7 +25,23 @@ public class UsersRestClient implements UsersClient {
     @Override
     public UserJson createUser(String username, String password) {
         registrationApi.registerUser(username, password);
-        return usersApi.currentUser(username);
+
+        long maxWaitTime = 5_000L;
+        Stopwatch sw = Stopwatch.createStarted();
+
+        while (sw.elapsed(TimeUnit.MILLISECONDS) < maxWaitTime) {
+            try {
+                UserJson userJson = usersApi.currentUser(username);
+                if (userJson != null && userJson.id() != null) {
+                    return userJson;
+                } else {
+                    Thread.sleep(100);
+                }
+            } catch (InterruptedException e) {
+                throw new RuntimeException("Ошибка при выполнении запроса на получение пользователя или ожидании", e);
+            }
+        }
+        throw new AssertionError("Созданный пользователь не был найден");
     }
 
     @Step("Найти пользователя по id: {id}")

@@ -20,6 +20,7 @@ import static guru.qa.niffler.utils.RandomDataUtils.randomSentence;
 class SpendingWebTest {
 
     private static final Config CFG = Config.getInstance();
+    private final EditSpendingPage editSpendingPage = new EditSpendingPage();
 
     @User(
             spendings = {
@@ -80,7 +81,9 @@ class SpendingWebTest {
                 .getCalendar()
                 .selectDateInCalendar(new Date());
 
-        new EditSpendingPage().save();
+        editSpendingPage.save();
+
+        editSpendingPage.checkAlertMessage("New spending is successfully created");
         new MainPage().checkThatTableContainsSpending(description);
     }
 }

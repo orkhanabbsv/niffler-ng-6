@@ -9,7 +9,7 @@ import java.util.List;
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.$;
 
-public class PeoplePage {
+public class PeoplePage extends BasePage<PeoplePage> {
   private final SelenideElement peopleTable = $("#all");
   private final SearchField searchField = new SearchField();
 

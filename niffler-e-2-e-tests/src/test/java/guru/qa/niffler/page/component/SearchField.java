@@ -6,19 +6,26 @@ import org.openqa.selenium.Keys;
 
 import static com.codeborne.selenide.Selenide.$;
 
-public class SearchField {
-    private final SelenideElement searchField = $("input[type='text']");
+public class SearchField extends BaseComponent<SearchField> {
+
+    public SearchField() {
+        super($("input[type='text']"));
+    }
+
+    public SearchField(SelenideElement self) {
+        super(self);
+    }
 
     @Step("Поиск по значению: {value}")
     public SearchField search(String value) {
-        searchField.sendKeys(value);
-        searchField.sendKeys(Keys.ENTER);
+        self.sendKeys(value);
+        self.sendKeys(Keys.ENTER);
         return this;
     }
 
     @Step("Очистить строку поиска")
     public SearchField clearIfNotEmpty() {
-        searchField.clear();
+        self.clear();
         return this;
     }
 }

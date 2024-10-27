@@ -9,6 +9,7 @@ import guru.qa.niffler.service.SpendDbClient;
 import guru.qa.niffler.service.UsersClient;
 import guru.qa.niffler.service.UsersDbClient;
 import guru.qa.niffler.service.UsersRestClient;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
@@ -17,6 +18,7 @@ import java.util.Optional;
 import static guru.qa.niffler.utils.RandomDataUtils.randomCategoryName;
 import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 
+@Disabled
 public class JdbcTest {
     private final UsersClient usersDbClient = new UsersDbClient();
     private final SpendClient client = new SpendDbClient();

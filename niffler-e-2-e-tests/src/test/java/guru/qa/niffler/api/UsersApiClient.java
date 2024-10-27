@@ -1,10 +1,7 @@
 package guru.qa.niffler.api;
 
-import guru.qa.niffler.config.Config;
 import guru.qa.niffler.model.UserJson;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -15,15 +12,13 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ParametersAreNonnullByDefault
-public class UsersApiClient {
+public class UsersApiClient extends RestClient {
+    private final UsersApi usersApi;
 
-    private final Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl(Config.getInstance().userdataUrl())
-            .addConverterFactory(JacksonConverterFactory.create())
-            .build();
-
-    private final UsersApi usersApi = retrofit.create(UsersApi.class);
-
+    public UsersApiClient() {
+        super(CFG.userdataUrl());
+        usersApi = create(UsersApi.class);
+    }
 
     public @Nullable UserJson currentUser(String username) {
         final Response<UserJson> response;

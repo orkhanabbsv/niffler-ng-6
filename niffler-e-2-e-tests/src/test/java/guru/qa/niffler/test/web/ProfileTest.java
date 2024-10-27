@@ -18,7 +18,6 @@ class ProfileTest {
   private static final Config CFG = Config.getInstance();
 
   @User(
-      username = "duck",
       categories = @Category(
           archived = true
       )
@@ -34,7 +33,6 @@ class ProfileTest {
   }
 
   @User(
-      username = "duck",
       categories = @Category(
           archived = false
       )
@@ -59,6 +57,8 @@ class ProfileTest {
             .getHeader()
             .toProfilePage()
             .setName(name)
-            .checkName(name);
+            .checkName(name)
+            .submitProfile()
+            .checkAlertMessage("Profile successfully updated");
   }
 }
