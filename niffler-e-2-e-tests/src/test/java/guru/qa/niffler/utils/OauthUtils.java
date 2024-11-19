@@ -39,6 +39,6 @@ public class OauthUtils {
                 return keyValue[1];
             }
         }
-        return null;
+        throw new IllegalArgumentException("Invalid redirect URL: " + redirectUrl);
     }
 }
