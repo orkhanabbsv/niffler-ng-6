@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.Random;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -32,85 +33,75 @@ public class InvitationsControllerTest {
 
     @Test
     void sendInvitation() throws Exception {
-        UserEntity userDataEntity = new UserEntity();
-        userDataEntity.setUsername("sasha");
-        userDataEntity.setCurrency(CurrencyValues.RUB);
-        usersRepository.save(userDataEntity);
+        UserEntity userDataEntity = getRandomUserEntity();
 
-        UserEntity friendDataEntity = new UserEntity();
-        friendDataEntity.setUsername("dima");
-        friendDataEntity.setCurrency(CurrencyValues.RUB);
-        usersRepository.save(friendDataEntity);
+        UserEntity friendDataEntity = getRandomUserEntity();
 
         mockMvc.perform(post("/internal/invitations/send")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("username", "sasha")
-                        .param("targetUsername", "dima")
+                        .param("username", userDataEntity.getUsername())
+                        .param("targetUsername", friendDataEntity.getUsername())
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value("dima"))
+                .andExpect(jsonPath("$.username").value(friendDataEntity.getUsername()))
                 .andExpect(jsonPath("$.friendState").value("INVITE_SENT"));
     }
 
     @Test
     void acceptInvitation() throws Exception {
-        UserEntity userDataEntity = new UserEntity();
-        userDataEntity.setUsername("sasha");
-        userDataEntity.setCurrency(CurrencyValues.RUB);
-        UserEntity userRequester = usersRepository.save(userDataEntity);
+        UserEntity userAddressee = getRandomUserEntity();
 
-        UserEntity friendDataEntity = new UserEntity();
-        friendDataEntity.setUsername("dima");
-        friendDataEntity.setCurrency(CurrencyValues.RUB);
-        usersRepository.save(friendDataEntity);
+        UserEntity userRequester = getRandomUserEntity();
 
         FriendshipEntity friendshipEntity = new FriendshipEntity();
-        friendshipEntity.setRequester(userRequester);
-        friendshipEntity.setAddressee(friendDataEntity);
+        friendshipEntity.setRequester(userAddressee);
+        friendshipEntity.setAddressee(userRequester);
         friendshipEntity.setStatus(FriendshipStatus.PENDING);
         friendshipEntity.setCreatedDate(new Date(System.currentTimeMillis()));
 
-        friendDataEntity.setFriendshipRequests(List.of(friendshipEntity));
-        usersRepository.save(friendDataEntity);
+        userRequester.setFriendshipRequests(List.of(friendshipEntity));
+        usersRepository.save(userRequester);
 
         mockMvc.perform(post("/internal/invitations/accept")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("username", "dima")
-                        .param("targetUsername", "sasha")
+                        .param("username", userRequester.getUsername())
+                        .param("targetUsername", userAddressee.getUsername())
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value("sasha"))
+                .andExpect(jsonPath("$.username").value(userAddressee.getUsername()))
                 .andExpect(jsonPath("$.friendState").value("FRIEND"));
     }
 
     @Test
     void declineInvitation() throws Exception {
-        UserEntity userDataEntity = new UserEntity();
-        userDataEntity.setUsername("sasha");
-        userDataEntity.setCurrency(CurrencyValues.RUB);
-        UserEntity userRequester = usersRepository.save(userDataEntity);
+        UserEntity userRequester = getRandomUserEntity();
 
-        UserEntity friendDataEntity = new UserEntity();
-        friendDataEntity.setUsername("dima");
-        friendDataEntity.setCurrency(CurrencyValues.RUB);
-        usersRepository.save(friendDataEntity);
+        UserEntity userAddressee = getRandomUserEntity();
 
         FriendshipEntity friendshipEntity = new FriendshipEntity();
         friendshipEntity.setRequester(userRequester);
-        friendshipEntity.setAddressee(friendDataEntity);
+        friendshipEntity.setAddressee(userAddressee);
         friendshipEntity.setStatus(FriendshipStatus.PENDING);
         friendshipEntity.setCreatedDate(new Date(System.currentTimeMillis()));
 
-        friendDataEntity.setFriendshipRequests(List.of(friendshipEntity));
-        usersRepository.save(friendDataEntity);
+        userAddressee.setFriendshipRequests(List.of(friendshipEntity));
+        usersRepository.save(userAddressee);
 
         mockMvc.perform(post("/internal/invitations/decline")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("username", "dima")
-                        .param("targetUsername", "sasha")
+                        .param("username", userRequester.getUsername())
+                        .param("targetUsername", userAddressee.getUsername())
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value("sasha"))
+                .andExpect(jsonPath("$.username").value(userAddressee.getUsername()))
                 .andExpect(jsonPath("$.friendState").doesNotExist());
+    }
+
+    private UserEntity getRandomUserEntity() {
+        UserEntity userEntity = new UserEntity();
+        userEntity.setUsername("user" + new Random().nextInt(1000));
+        userEntity.setCurrency(CurrencyValues.RUB);
+        usersRepository.save(userEntity);
+        return userEntity;
     }
 }

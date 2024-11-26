@@ -5,6 +5,7 @@ import guru.qa.niffler.data.CurrencyValues;
 import guru.qa.niffler.data.UserEntity;
 import guru.qa.niffler.data.repository.UserRepository;
 import guru.qa.niffler.model.UserJson;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -13,7 +14,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.hamcrest.Matchers.*;
+import java.util.Random;
+
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -30,59 +34,48 @@ class UserControllerTest {
   @Autowired
   private UserRepository usersRepository;
 
+  @BeforeEach
+  void cleanDatabase() {
+    usersRepository.deleteAll();
+  }
+
   @Test
   void currentUserEndpoint() throws Exception {
-    UserEntity userDataEntity = new UserEntity();
-    userDataEntity.setUsername("dima");
-    userDataEntity.setCurrency(CurrencyValues.RUB);
-    usersRepository.save(userDataEntity);
+    UserEntity userDataEntity = getRandomUserEntity();
 
     mockMvc.perform(get("/internal/users/current")
             .contentType(MediaType.APPLICATION_JSON)
-            .param("username", "dima")
+            .param("username", userDataEntity.getUsername())
         )
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.username").value("dima"));
+        .andExpect(jsonPath("$.username").value(userDataEntity.getUsername()));
   }
 
   @Test
   void allUsersEndpoint() throws Exception {
-    UserEntity userDataEntity = new UserEntity();
-    userDataEntity.setUsername("dima");
-    userDataEntity.setCurrency(CurrencyValues.RUB);
-    usersRepository.save(userDataEntity);
+    UserEntity userDataEntity = getRandomUserEntity();
 
-    UserEntity user1DataEntity = new UserEntity();
-    user1DataEntity.setUsername("sasha");
-    user1DataEntity.setCurrency(CurrencyValues.RUB);
-    usersRepository.save(user1DataEntity);
+    UserEntity user1DataEntity = getRandomUserEntity();
 
-    UserEntity user2DataEntity = new UserEntity();
-    user2DataEntity.setUsername("vadim");
-    user2DataEntity.setCurrency(CurrencyValues.RUB);
-    usersRepository.save(user2DataEntity);
+    UserEntity user2DataEntity = getRandomUserEntity();
 
     mockMvc.perform(get("/internal/users/all")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .param("username", "dima")
+                    .param("username", userDataEntity.getUsername())
             )
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", hasSize(2)))
-            .andExpect(jsonPath("$[*].username", containsInAnyOrder("sasha", "vadim")));
+            .andExpect(jsonPath("$[*].username", containsInAnyOrder(user1DataEntity.getUsername(),
+                    user2DataEntity.getUsername())));
   }
 
   @Test
   void updateUserEndpoint() throws Exception {
-    UserEntity userDataEntity = new UserEntity();
-    userDataEntity.setUsername("dima");
-    userDataEntity.setFullname("Dmitry Kuznetsov");
-    userDataEntity.setSurname("Kuznetsov");
-    userDataEntity.setCurrency(CurrencyValues.RUB);
-    UserEntity save = usersRepository.save(userDataEntity);
+    UserEntity userDataEntity = getRandomUserEntity();
 
     UserJson updatedUser = new UserJson(
-            save.getId(),
-            save.getUsername(),
+            userDataEntity.getId(),
+            userDataEntity.getUsername(),
             null,
             null,
             "Sasha Rasulov",
@@ -100,8 +93,16 @@ class UserControllerTest {
                     .content(contentBody)
             )
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.username").value("dima"))
-            .andExpect(jsonPath("$.currency").value("USD"))
-            .andExpect(jsonPath("$.fullname").value("Sasha Rasulov"));
+            .andExpect(jsonPath("$.username").value(updatedUser.username()))
+            .andExpect(jsonPath("$.currency").value(updatedUser.currency().name()))
+            .andExpect(jsonPath("$.fullname").value(updatedUser.fullname()));
+  }
+
+  private UserEntity getRandomUserEntity() {
+    UserEntity userEntity = new UserEntity();
+    userEntity.setUsername("user-" + new Random().nextInt());
+    userEntity.setCurrency(CurrencyValues.RUB);
+    usersRepository.save(userEntity);
+    return userEntity;
   }
 }
