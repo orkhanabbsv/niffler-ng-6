@@ -16,5 +16,4 @@ public interface GatewayV2Api {
                                               @Query("searchQuery") @Nullable String searchQuery,
                                               @Query("page") int page,
                                               @Query("sort") String sort);
-
 }
