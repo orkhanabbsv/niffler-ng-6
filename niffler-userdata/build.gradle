@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'guru.qa'
-version = '2.0.1'
+version = '2.0.2'
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -28,6 +28,7 @@ dependencies {
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation "com.h2database:h2:${project.ext.h2Version}"
+    testImplementation 'com.github.javafaker:javafaker:1.0.2'
 }
 
 xjcGeneration {
