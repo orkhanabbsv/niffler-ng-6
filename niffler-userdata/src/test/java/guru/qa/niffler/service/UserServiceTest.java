@@ -124,6 +124,7 @@ class UserServiceTest {
 
     @Test
     void allUsersShouldIgnoreBigPhoto(@Mock UserRepository userRepository) {
+        //Arrange
         String bigPhotoData = "big_photo_data_";
         String smallPhotoData = "small_photo_data";
 
@@ -142,9 +143,11 @@ class UserServiceTest {
                         )
                 ));
 
+        //Act
         userService = new UserService(userRepository);
         List<UserJsonBulk> userJsonBulks = userService.allUsers(mainTestUserName, null);
 
+        //Assert
         verify(userRepository, times(1)).findByUsernameNot(eq(mainTestUserName));
         assertEquals(1, userJsonBulks.size());
         assertNull(userJsonBulks.getFirst().photo());
@@ -153,19 +156,23 @@ class UserServiceTest {
 
     @Test
     void getFriendsShouldReturnEmptyListIfUserNotFound(@Mock UserRepository userRepository) {
+        //Arrange
         when(userRepository.findByUsername(eq(notExistingUser)))
                 .thenReturn(Optional.empty());
 
         userService = new UserService(userRepository);
 
+        //Act
         NotFoundException notFoundException =
                 assertThrows(NotFoundException.class, () -> userService.friends(notExistingUser, null));
 
+        //Assert
         assertEquals("Can`t find user by username: '" + notExistingUser + "'", notFoundException.getMessage());
     }
 
     @Test
     void getFriendsList(@Mock UserRepository userRepository) {
+        //Arrange
         when(userRepository.findByUsername(eq(mainTestUserName)))
                 .thenReturn(Optional.of(mainTestUser));
 
@@ -174,6 +181,7 @@ class UserServiceTest {
 
         userService = new UserService(userRepository);
 
+        //Act
         final List<UserJsonBulk> friends = userService.friends(mainTestUserName, null);
         assertEquals(2, friends.size());
         final UserJsonBulk invitation = friends.stream()
@@ -186,12 +194,14 @@ class UserServiceTest {
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("user without status not found"));
 
+        //Assert
         assertEquals(secondTestUserName, invitation.username());
         assertEquals(thirdTestUserName, friend.username());
     }
 
     @Test
     void getFriendsShouldReturnFriendsWithSpecifiedSearchQuery(@Mock UserRepository userRepository) {
+        //Arrange
         when(userRepository.findByUsername(eq(mainTestUserName)))
                 .thenReturn(Optional.of(mainTestUser));
 
@@ -200,6 +210,7 @@ class UserServiceTest {
 
         userService = new UserService(userRepository);
 
+        //Act
         final List<UserJsonBulk> friends = userService.friends(mainTestUserName, secondTestUserName);
         assertEquals(1, friends.size());
         final UserJsonBulk invitation = friends.stream()
@@ -207,11 +218,13 @@ class UserServiceTest {
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("Friend with state INVITE_SENT not found"));
 
+        //Assert
         assertEquals(secondTestUserName, invitation.username());
     }
 
     @Test
     void getFriendsShouldReturnEmptyListWithUnknownSearchQuery(@Mock UserRepository userRepository) {
+        //Arrange
         when(userRepository.findByUsername(eq(mainTestUserName)))
                 .thenReturn(Optional.of(mainTestUser));
 
@@ -220,7 +233,9 @@ class UserServiceTest {
 
         userService = new UserService(userRepository);
 
+        //Act
         final List<UserJsonBulk> friends = userService.friends(mainTestUserName, "unknown");
+        //Assert
         assertTrue(friends.isEmpty());
     }
 
@@ -241,6 +256,7 @@ class UserServiceTest {
 
     @Test
     void allUsersShouldReturnUsersListFilteredBySearchQuery(@Mock UserRepository userRepository) {
+        //Arrange
         when(userRepository.findByUsernameNot(eq(mainTestUserName), eq(secondTestUserName)))
                 .thenReturn(getMockUsersMappingFromDb()
                         .stream()
@@ -250,6 +266,7 @@ class UserServiceTest {
 
         userService = new UserService(userRepository);
 
+        //Act
         final List<UserJsonBulk> users = userService.allUsers(mainTestUserName, secondTestUserName);
         assertEquals(1, users.size());
         final UserJsonBulk invitation = users.stream()
@@ -257,6 +274,7 @@ class UserServiceTest {
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("Friend with state INVITE_SENT not found"));
 
+        //Assert
         assertEquals(secondTestUserName, invitation.username());
     }
 
@@ -303,7 +321,7 @@ class UserServiceTest {
 
     @Test
     void getCurrentUserShouldReturnDefaultUserWhenUserDoesNotExistInDb(@Mock UserRepository userRepository) {
-        //Assert
+        //Arrange
         when(userRepository.findByUsername(eq(mainTestUserName)))
                 .thenReturn(Optional.empty());
         userService = new UserService(userRepository);
@@ -311,7 +329,7 @@ class UserServiceTest {
         //Act
         UserJson currentUser = userService.getCurrentUser(mainTestUserName);
 
-        //Arrange
+        //Assert
         assertEquals(mainTestUserName, currentUser.username());
         assertEquals(mainTestUser.getCurrency(), currentUser.currency());
         assertNull(currentUser.id());
