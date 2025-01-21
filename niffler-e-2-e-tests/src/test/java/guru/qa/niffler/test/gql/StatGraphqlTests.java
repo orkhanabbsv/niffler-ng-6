@@ -52,7 +52,7 @@ public class StatGraphqlTests extends BaseGraphQlTest {
     @ParameterizedTest(name = "Фильтр-{index} => currency={0}, statCurrency={1}, period={2}, expectedTotal={3}")
     @MethodSource("guru.qa.niffler.test.gql.data.Data#filteredData")
     @ApiLogin
-    void statTestByFilteredByFilterPeriod(CurrencyValues currency,
+    void statTestByFilteredByFilter(CurrencyValues currency,
                                           CurrencyValues statCurrency,
                                           FilterPeriod period,
                                           double expectedTotal,
