@@ -66,7 +66,7 @@ public class UserQueryController {
                                   @Argument @Nullable List<String> sort,
                                   @Argument @Nullable String searchQuery,
                                   @Nonnull DataFetchingEnvironment env) {
-    checkSubQueries(env, 2, "friends");
+    checkSubQueries(env, 1, "friends");
     final String username = principal.getClaim("sub");
     return userDataClient.allUsers(
         username,
@@ -78,7 +78,7 @@ public class UserQueryController {
   @QueryMapping
   public UserGql user(@AuthenticationPrincipal Jwt principal,
                       @Nonnull DataFetchingEnvironment env) {
-    checkSubQueries(env, 2, "friends");
+    checkSubQueries(env, 1, "friends");
     final String username = principal.getClaim("sub");
     return UserGql.fromUserJson(
         userDataClient.currentUser(username)
@@ -89,7 +89,7 @@ public class UserQueryController {
     for (String queryKey : queryKeys) {
       List<SelectedField> selectors = env.getSelectionSet().getFieldsGroupedByResultKey().get(queryKey);
       if (selectors != null && selectors.size() > depth) {
-        throw new TooManySubQueriesException("Can`t fetch over 2 " + queryKey + " sub-queries");
+        throw new TooManySubQueriesException("Can`t fetch over " + depth + " " + queryKey + " sub-queries");
       }
     }
   }
