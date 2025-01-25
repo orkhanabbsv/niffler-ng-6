@@ -77,7 +77,7 @@ public class ApiLoginExtension implements BeforeTestExecutionCallback, Parameter
             testData.incomeInvitations().addAll(outcomeInvitations);
 
             List<UserJson> friends = usersApiClient.getFriends(apiLogin.username(), null)
-                    .stream().filter(fr -> fr.friendState() == FriendState.FRIEND)
+                    .stream().filter(fr -> fr.friendshipStatus() == FriendshipStatus.FRIEND)
                     .toList();
 
             testData.incomeInvitations().addAll(friends);

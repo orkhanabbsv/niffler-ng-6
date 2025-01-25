@@ -94,11 +94,11 @@ public class FriendsTest {
     List<UserJson> result = gatewayApiClient.allFriends(token, null);
 
     final List<UserJson> friendsFromResponse = result.stream().filter(
-            u -> u.friendState() == FriendState.FRIEND
+            u -> u.friendshipStatus() == FriendshipStatus.FRIEND
     ).toList();
 
     final List<UserJson> incomeInvitationFromResponse = result.stream().filter(
-            u -> u.friendState() == FriendState.INVITE_RECEIVED
+            u -> u.friendshipStatus() == FriendshipStatus.INVITE_RECEIVED
     ).toList();
     String expectedUsername = user.testData().incomeInvitations().getLast().username();
 
@@ -117,11 +117,11 @@ public class FriendsTest {
     List<UserJson> result = gatewayApiClient.allFriends(token, null);
 
     final List<UserJson> friendsFromResponse = result.stream().filter(
-            u -> u.friendState() == FriendState.FRIEND
+            u -> u.friendshipStatus() == FriendshipStatus.FRIEND
     ).toList();
 
     final List<UserJson> incomeInvitationFromResponse = result.stream().filter(
-            u -> u.friendState() == FriendState.INVITE_RECEIVED
+            u -> u.friendshipStatus() == FriendshipStatus.INVITE_RECEIVED
     ).toList();
 
     assertEquals(0, friendsFromResponse.size());
@@ -141,7 +141,7 @@ public class FriendsTest {
 
     List<UserJson> friendResult = gatewayApiClient.allFriends(expectedUserToken, null);
     final List<UserJson> incomeInvitationFromResponse = friendResult.stream().filter(
-            u -> u.friendState() == FriendState.INVITE_RECEIVED
+            u -> u.friendshipStatus() == FriendshipStatus.INVITE_RECEIVED
     ).toList();
 
     assertEquals(1, incomeInvitationFromResponse.size());
