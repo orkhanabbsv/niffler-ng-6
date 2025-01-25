@@ -26,7 +26,7 @@ public class FriendsV2Test {
   @User(friends = 2, incomeInvitations = 1)
   @ApiLogin
   @Test
-  void allFriendsAndIncomeInvitationsShouldBeReturnedFroUser(UserJson user, @Token String token) {
+  void allFriendsAndIncomeInvitationsShouldBeReturnedForUser(UserJson user, @Token String token) {
     final List<UserJson> expectedFriends = user.testData().friends();
     final List<UserJson> expectedInvitations = user.testData().incomeInvitations();
 

@@ -12,8 +12,11 @@ import io.qameta.allure.Step;
 import org.jetbrains.annotations.NotNull;
 import retrofit2.Response;
 
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 import static java.util.Objects.requireNonNull;
@@ -128,5 +131,65 @@ public class UsersApiClient implements UsersClient {
             .add(response.body());
       }
     }
+  }
+
+  @Nonnull
+  public List<UserJson> usersAll(UserJson userJson) {
+    final Response<List<UserJson>> response;
+    try {
+      response = userdataApi.allUsers(userJson.username(), null)
+              .execute();
+    } catch (IOException e) {
+      throw new AssertionError(e);
+    }
+    assertEquals(200, response.code());
+    return response.body() == null
+            ? Collections.emptyList()
+            : response.body();
+  }
+
+  @Nonnull
+  public List<UserJson> getIncomeInvitations(String username, String searchQuery) {
+    final Response<List<UserJson>> response;
+    try {
+      response = userdataApi.incomeInvitations(username, searchQuery)
+              .execute();
+    } catch (IOException e) {
+      throw new AssertionError(e);
+    }
+    assertEquals(200, response.code());
+    return response.body() == null
+            ? Collections.emptyList()
+            : response.body();
+  }
+
+  @Nonnull
+  public List<UserJson> getOutcomeInvitations(String username, String searchQuery) {
+    final Response<List<UserJson>> response;
+    try {
+      response = userdataApi.outcomeInvitations(username, searchQuery)
+              .execute();
+    } catch (IOException e) {
+      throw new AssertionError(e);
+    }
+    assertEquals(200, response.code());
+    return response.body() == null
+            ? Collections.emptyList()
+            : response.body();
+  }
+
+  @Nonnull
+  public List<UserJson> getFriends(String username, String searchQuery) {
+    final Response<List<UserJson>> response;
+    try {
+      response = userdataApi.friends(username, searchQuery)
+              .execute();
+    } catch (IOException e) {
+      throw new AssertionError(e);
+    }
+    assertEquals(200, response.code());
+    return response.body() == null
+            ? Collections.emptyList()
+            : response.body();
   }
 }
