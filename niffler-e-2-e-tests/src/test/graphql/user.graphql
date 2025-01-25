@@ -1,0 +1,124 @@
+mutation User($input: UserInput!) {
+    user(input: $input) {
+        id
+        username
+        fullname
+        photo
+    }
+}
+
+query CurrentUser {
+    user {
+        id
+        username
+        fullname
+        photo
+        categories {
+            id
+            name
+            archived
+        }
+    }
+}
+
+query Categories {
+    user {
+        categories {
+            id
+            name
+            archived
+        }
+    }
+}
+query Friends($page:Int!, $size:Int!, $sort: [String!], $searchQuery:String) {
+    user {
+        friends(page: $page, size: $size, sort: $sort, searchQuery: $searchQuery) {
+            edges {
+                node {
+                    id
+                    username
+                    photoSmall
+                    fullname
+                    friendshipStatus
+                }
+            }
+            pageInfo {
+                hasPreviousPage
+                hasNextPage
+            }
+        }
+    }
+}
+
+query AllPeopleAndFriends($page:Int!, $size:Int!, $sort: [String!], $searchQuery:String) {
+    allPeople(page: $page, size: $size, sort: $sort, searchQuery: $searchQuery) {
+        edges {
+            cursor
+            node {
+                username
+                fullname
+                categories {
+                    id
+                    name
+                    username
+                    archived
+                }
+                friends(page: $page, size: $size) {
+                    pageInfo {
+                        hasPreviousPage
+                        hasNextPage
+                        startCursor
+                        endCursor
+                    }
+                }
+            }
+        }
+    }
+}
+
+query FriendsOfFriends ($page:Int!, $size:Int!){
+    user {
+        friends(page: $page, size: $size) {
+            edges {
+                cursor
+                node {
+                    friends(page: $page, size: $size) {
+                        edges {
+                            cursor
+                            node {
+                                username
+                                friends(page: $page, size: $size) {
+                                    edges {
+                                        cursor
+                                        node {
+                                            id
+                                            username
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+query AllPeople($page:Int!, $size:Int!, $sort: [String!], $searchQuery:String) {
+    allPeople(page: $page, size: $size, sort: $sort, searchQuery: $searchQuery) {
+        edges {
+            node {
+                id
+                username
+                photoSmall
+                fullname
+                friendshipStatus
+            }
+        }
+        pageInfo {
+            hasPreviousPage
+            hasNextPage
+        }
+    }
+}
