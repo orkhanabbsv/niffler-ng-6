@@ -1,12 +1,16 @@
 #!/bin/bash
 source ./docker.properties
 export PROFILE=docker
+export BROWSER=chrome
 export PREFIX="${IMAGE_PREFIX}"
 export ALLURE_DOCKER_API=http://allure:5050/
 export HEAD_COMMIT_MESSAGE="local build"
 export FRONT_VERSION="2.1.0"
 export COMPOSE_PROFILES=test
 export ARCH=$(uname -m)
+
+echo '### BROWSER ###'
+echo $BROWSER
 
 echo '### Java version ###'
 java --version
@@ -36,6 +40,11 @@ fi
 bash ./gradlew clean
 bash ./gradlew jibDockerBuild -x :niffler-e-2-e-tests:test
 
-docker pull selenoid/vnc_chrome:127.0
+if [ "$1" = "firefox" ]; then
+docker pull selenoid/vnc_firefox:125.0
+else
+docker pull selenoid/vnc_chrome:125.0
+fi
+
 docker compose up -d
 docker ps -a
