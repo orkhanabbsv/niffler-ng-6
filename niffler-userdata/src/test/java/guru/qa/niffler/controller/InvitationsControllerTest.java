@@ -44,7 +44,7 @@ public class InvitationsControllerTest {
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username").value(friendDataEntity.getUsername()))
-                .andExpect(jsonPath("$.friendState").value("INVITE_SENT"));
+                .andExpect(jsonPath("$.friendshipStatus").value("INVITE_SENT"));
     }
 
     @Test
@@ -69,7 +69,7 @@ public class InvitationsControllerTest {
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username").value(userAddressee.getUsername()))
-                .andExpect(jsonPath("$.friendState").value("FRIEND"));
+                .andExpect(jsonPath("$.friendshipStatus").value("FRIEND"));
     }
 
     @Test
@@ -94,7 +94,7 @@ public class InvitationsControllerTest {
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username").value(userAddressee.getUsername()))
-                .andExpect(jsonPath("$.friendState").doesNotExist());
+                .andExpect(jsonPath("$.friendshipStatus").doesNotExist());
     }
 
     private UserEntity getRandomUserEntity() {

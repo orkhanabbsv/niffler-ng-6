@@ -6,8 +6,8 @@ public interface Config {
 
   static @Nonnull Config getInstance() {
     return "docker".equals(System.getProperty("test.env"))
-        ? DockerConfig.INSTANCE
-        : LocalConfig.INSTANCE;
+            ? DockerConfig.INSTANCE
+            : LocalConfig.INSTANCE;
   }
 
   @Nonnull
@@ -45,5 +45,7 @@ public interface Config {
   }
 
   @Nonnull
-  String ghUrl();
+  default String ghUrl() {
+    return "https://api.github.com/";
+  }
 }

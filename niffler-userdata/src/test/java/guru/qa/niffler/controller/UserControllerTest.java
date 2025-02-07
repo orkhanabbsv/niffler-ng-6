@@ -53,6 +53,7 @@ class UserControllerTest {
 
     @Test
     void allUsersEndpoint() throws Exception {
+        usersRepository.deleteAll();
         UserEntity userDataEntity = getRandomUserEntity();
 
         UserEntity user1DataEntity = getRandomUserEntity();

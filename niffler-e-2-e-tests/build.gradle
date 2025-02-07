@@ -24,7 +24,7 @@ buildscript {
                 ? "http://userdata.niffler.dc:8089/ws/userdata.wsdl"
                 : "http://127.0.0.1:8089/ws/userdata.wsdl"
         gatewayIntroceptionUrl = System.getProperty("test.env") == "docker"
-                ? "http://gateway.niffler.dc:8089/graphql"
+                ? "http://gateway.niffler.dc:8090/graphql"
                 : "http://127.0.0.1:8090/graphql"
     }
 }
